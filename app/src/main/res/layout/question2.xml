@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:weightSum="2">
+
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="326dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="atom360 "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#283593"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="COVID-19 assessment"
+                android:textColor="#D8D8D8"
+                android:textSize="18sp"
+
+                android:textStyle="italic" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+
+            <TextView
+                android:id="@+id/question2"
+                android:layout_width="match_parent"
+                android:layout_height="185dp"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:inputType="textMultiLine"
+
+
+                android:text="What is your age?"
+                android:textColor="#283593"
+                android:textSize="24sp"
+                android:textStyle="italic" />
+
+            <EditText
+                android:id="@+id/age"
+                android:layout_width="283dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:inputType="number"
+                />
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/toq3"
+            android:layout_width="227dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_drawable"
+            android:clickable="true"
+            android:text="Next"
+            android:textAlignment="center"
+            android:textSize="15dp" />
+    </RelativeLayout>
+
+</RelativeLayout>

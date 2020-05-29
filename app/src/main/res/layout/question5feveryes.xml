@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:weightSum="2">
+
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="326dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="atom360 "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#283593"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="COVID-19 assessment"
+                android:textColor="#D8D8D8"
+                android:textSize="18sp"
+
+                android:textStyle="italic" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="519dp"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/ques51"
+                android:layout_width="match_parent"
+                android:layout_height="132dp"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:inputType="textMultiLine"
+
+
+                android:text="How high is your fever?
+
+Select one answer."
+                android:textColor="#283593"
+                android:textSize="24sp"
+                android:textStyle="italic" />
+
+            <RadioGroup
+                android:id="@+id/RGroup51"
+                android:layout_width="wrap_content"
+                android:layout_height="536dp"
+                android:layout_gravity="center">
+
+                <CheckBox
+                    android:id="@+id/first51"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="Between 37.5°C and 38°C (99.5°F and 100.4°F)"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/second51"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="Between 38°C and 40°C (100.4°F and 104°F)"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/third51"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="Over 40°C (104°F)"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/fourth51"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="I haven’t taken my temperature"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="117dp"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/toq52"
+                        android:layout_width="227dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button_drawable"
+                        android:clickable="true"
+                        android:text="Next"
+                        android:textAlignment="center"
+                        android:textSize="15dp" />
+                </RelativeLayout>
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

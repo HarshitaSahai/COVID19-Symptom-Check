@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:weightSum="2">
+
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="326dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="atom360 "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#283593"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="COVID-19 assessment"
+                android:textColor="#D8D8D8"
+                android:textSize="18sp"
+
+                android:textStyle="italic" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+
+            <TextView
+                android:id="@+id/editText7"
+                android:layout_width="match_parent"
+                android:layout_height="73dp"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:inputType="textMultiLine"
+
+
+                android:text="This screening tool is not suitable if you have:"
+                android:textColor="#283593"
+                android:textSize="18sp"
+                android:textStyle="italic" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/RGroup"
+                android:layout_gravity="center">
+
+                <CheckBox
+                    android:id="@+id/first"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="signs of a heart attack (heavy, tight, or squeezing pain in the center of your chest)"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="signs of a stroke (face drooping on one side, weakness of the arms, difficulty speaking)"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/third"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="severe difficulty breathing (gasping for breath, unable to complete a sentence, choking, or lips turning blue)"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/forth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="signs of a heart attack (heavy, tight, or squeezing pain in the center of your chest)"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/fifth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="heavy bleeding"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/sixth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="severe injuries such as after an accident"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+                <CheckBox
+                    android:id="@+id/seventh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="a seizure (also known as a fit) "
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+                <CheckBox
+                    android:id="@+id/eigth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="sudden rapid swelling of the eyes, lips, mouth, throat or tongue"
+                    android:textColorLink="#1565C0"
+                    android:textSize="18sp" />
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/editText"
+                android:layout_width="match_parent"
+                android:layout_height="118dp"
+                android:layout_gravity="bottom"
+                android:ems="10"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:inputType="textMultiLine"
+
+
+                android:text="If you have any of these symptoms, call your local emergency number now."
+                android:textColor="#283593"
+                android:textSize="18sp"
+                android:textStyle="italic" />
+
+
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:weightSum="3">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/Idnhaots"
+                android:layout_width="227dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_drawable"
+                android:clickable="true"
+                android:text="I do not have any of these symptoms"
+                android:textAlignment="center"
+                android:textSize="15dp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>
