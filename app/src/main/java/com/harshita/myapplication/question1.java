@@ -2,7 +2,11 @@
 package com.harshita.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -12,12 +16,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,10 +24,13 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 public class question1  extends AppCompatActivity {
+
 
     //WebView wv ;
     //String url = "https://covid-19.ada.com";
@@ -41,6 +43,8 @@ public class question1  extends AppCompatActivity {
         //wv.setWebViewClient(new WebViewClient());
         //wv.getSettings().setJavaScriptEnabled(true);
         //wv.loadUrl(url);
+
+
         addListenerOnButtonClick();
     }
 
@@ -54,6 +58,10 @@ public class question1  extends AppCompatActivity {
         getstarted1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                
+
+
                 if (!Male.isChecked() && !Female.isChecked())
                     Toast.makeText(question1.this, "Please Select Gender", Toast.LENGTH_SHORT).show();
 
