@@ -12,15 +12,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 
-import com.github.bassaer.chatmessageview.model.Message;
-import com.github.bassaer.chatmessageview.util.ChatBot;
-import com.github.bassaer.chatmessageview.view.ChatView;
 
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ChatView mChatView;
+
     //WebView wv ;
     //String url = "https://covid-19.ada.com";
     @Override
