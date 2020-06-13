@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1061046681267",
+    "firebase_url": "https://my-application-abc52.firebaseio.com",
+    "project_id": "my-application-abc52",
+    "storage_bucket": "my-application-abc52.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061046681267:android:0448f27910ade39d007ac6",
+        "android_client_info": {
+          "package_name": "com.harshita.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1061046681267-dk9bafc6rsaebcevphha2llo8r13f4bl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.harshita.myapplication",
+            "certificate_hash": "77031efe53bc1fe94d76a025d818dc46e4c46964"
+          }
+        },
+        {
+          "client_id": "1061046681267-i43evq9muanjt6hg4bna7dll8plcihfo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiaYnDT14revWAASqJENfnvz61CPbp54s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061046681267-i43evq9muanjt6hg4bna7dll8plcihfo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

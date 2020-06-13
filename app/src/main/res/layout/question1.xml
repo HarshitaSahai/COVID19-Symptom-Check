@@ -48,10 +48,28 @@
             android:layout_height="2dp"
             android:background="#c0c0c0"/>
 
-        <LinearLayout
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:chatview="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+
+            style="@style/Widget.AppCompat.ButtonBar"
             android:layout_width="match_parent"
-            android:layout_height="373dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            tools:context="co.intentservice.chatui.sample.question1">
+
+            <co.intentservice.chatui.ChatView
+                android:id="@+id/chat_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                chatview:backgroundColor="@color/off_white"
+                chatview:bubbleElevation="elevated"
+                chatview:bubbleBackgroundRcv="@color/blue"
+                chatview:bubbleBackgroundSend="@color/white"
+                chatview:inputHint="@string/start_typing"/>
+
 
 
             <TextView
@@ -98,21 +116,7 @@
 
 
     </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
 
-        <Button
-            android:id="@+id/toq2"
-            android:layout_width="227dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_drawable"
-            android:clickable="true"
-            android:text="Next"
-            android:textAlignment="center"
-            android:textSize="15dp" />
-    </RelativeLayout>
 
 
 </RelativeLayout>
