@@ -1,22 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black"
-    android:backgroundTint="@color/black"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <com.stfalcon.chatkit.messages.MessagesList
-        android:id="@+id/messagesList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/input"
-        />
 
-    <com.stfalcon.chatkit.messages.MessageInput
-        android:id="@+id/input"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:inputHint="@string/hint_enter_a_message"/>
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:weightSum="2">
+
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="326dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="atom360 "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#283593"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="COVID-19 assessment"
+                android:textColor="#D8D8D8"
+                android:textSize="18sp"
+
+                android:textStyle="italic" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:chatview="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+
+            style="@style/Widget.AppCompat.ButtonBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            tools:context="co.intentservice.chatui.sample.question1">
+
+            <co.intentservice.chatui.ChatView
+                android:id="@+id/chat_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                chatview:backgroundColor="@color/off_white"
+                chatview:bubbleElevation="elevated"
+                chatview:bubbleBackgroundRcv="@color/blue"
+                chatview:bubbleBackgroundSend="@color/white"
+                chatview:inputHint="@string/start_typing"/>
+
+
+
+            <TextView
+                android:id="@+id/question1"
+                android:layout_width="match_parent"
+                android:layout_height="142dp"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:inputType="textMultiLine"
+
+
+                android:text="Are you a male or female?"
+                android:textColor="#283593"
+                android:textSize="24sp"
+                android:textStyle="italic" />
+
+            <RadioGroup
+                android:id="@+id/RGroup1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <RadioButton
+                    android:id="@+id/male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="male"
+                    android:textSize="24sp" />
+
+                <RadioButton
+                    android:id="@+id/female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="female"
+                    android:textSize="24sp" />
+
+
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
 </RelativeLayout>

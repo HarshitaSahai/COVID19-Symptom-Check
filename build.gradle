@@ -14,9 +14,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven {
-            url "http://dl.bintray.com/chat-sdk/chat-sdk-android"
-            }
+
         maven { url "https://jitpack.io" }
     }
 

@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="btn_scan_qr" />
-    <string name="hint_enter_a_message">Enter Answer</string>
+
+    <string name="app_name">Android ChatView Sample</string>
+    <string name="start_typing">Start typing</string>
+
 </resources>
