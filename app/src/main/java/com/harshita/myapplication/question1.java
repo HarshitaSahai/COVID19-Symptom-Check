@@ -83,7 +83,7 @@ public class question1  extends AppCompatActivity {
                 }
                 Log.wtf("object here", String.valueOf(obj1));
                 displayQuestions();
-                Log.wtf("closing function here pa","yes ma");
+
                 return true;
             }
 
@@ -93,10 +93,14 @@ public class question1  extends AppCompatActivity {
 
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
+        //Add your API response just like how you did it for intents. -> Convert to String
+        // e.g. code -> .putString("apiResponse",apiResponse.toString())
+        Data inputData = new Data.Builder().putInt("questionNumber",questionIndex).build();
+
         @SuppressLint("RestrictedApi") OneTimeWorkRequest displayNextQuestionRequest =
                 new OneTimeWorkRequest.Builder(IncomingMessageDisplayer.class)
                         .setInitialDelay(2, TimeUnit.SECONDS)
-                        .setInputData(new Data.Builder().putInt("questionNumber",questionIndex).build())
+                        .setInputData(inputData)
                         .build();
         workManager.enqueueUniqueWork("displayNextQuestion",ExistingWorkPolicy.REPLACE, displayNextQuestionRequest);
 
@@ -105,10 +109,8 @@ public class question1  extends AppCompatActivity {
             public void onChanged(List<WorkInfo> workInfos) {
                 if(workInfos!=null && !workInfos.isEmpty()){
                     if(workInfos.get(0).getState().equals(WorkInfo.State.SUCCEEDED)){
-                        Log.wtf("displaying message now pa","yes ma");
                         chatView1.addMessage(new ChatMessage(workInfos.get(0).getOutputData().getString("nextQuestion"), System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
                     }
-
                 }
             }
         });
