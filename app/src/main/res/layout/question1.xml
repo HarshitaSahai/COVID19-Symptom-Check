@@ -72,6 +72,7 @@
 
 
 
+<!-- TODO: Clean up the ui elements you don't need. If you later need them, you can always check the git commit where you removed the code and copy paste the same later -->
             <TextView
                 android:id="@+id/question1"
                 android:layout_width="match_parent"
