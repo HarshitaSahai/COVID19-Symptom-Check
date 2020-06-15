@@ -1,36 +1,23 @@
 
 package com.harshita.myapplication;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
-
-
-
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+
 import co.intentservice.chatui.ChatView;
 import co.intentservice.chatui.models.ChatMessage;
 
@@ -41,6 +28,7 @@ public class question1  extends AppCompatActivity {
     //String url = "https://covid-19.ada.com";
     JSONObject obj;
     private ChatView chatView1;
+    private int questionIndex =0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +49,7 @@ public class question1  extends AppCompatActivity {
             }
 
         });
+
         chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
                 @Override
             public boolean sendMessage(ChatMessage chatMessage) {
@@ -93,26 +82,37 @@ public class question1  extends AppCompatActivity {
 
                 }
                 Log.wtf("object here", String.valueOf(obj1));
-                question2(chatView1);
-
+                displayQuestions();
+                Log.wtf("closing function here pa","yes ma");
                 return true;
             }
 
+        });
+    }
 
+
+    private void displayQuestions(){
+        WorkManager workManager = WorkManager.getInstance(this);
+        @SuppressLint("RestrictedApi") OneTimeWorkRequest displayNextQuestionRequest =
+                new OneTimeWorkRequest.Builder(IncomingMessageDisplayer.class)
+                        .setInitialDelay(2, TimeUnit.SECONDS)
+                        .setInputData(new Data.Builder().putInt("questionNumber",questionIndex).build())
+                        .build();
+        workManager.enqueueUniqueWork("displayNextQuestion",ExistingWorkPolicy.REPLACE, displayNextQuestionRequest);
+
+        workManager.getWorkInfosForUniqueWorkLiveData("displayNextQuestion").observe(this, new Observer<List<WorkInfo>>() {
+            @Override
+            public void onChanged(List<WorkInfo> workInfos) {
+                if(workInfos!=null && !workInfos.isEmpty()){
+                    if(workInfos.get(0).getState().equals(WorkInfo.State.SUCCEEDED)){
+                        Log.wtf("displaying message now pa","yes ma");
+                        chatView1.addMessage(new ChatMessage(workInfos.get(0).getOutputData().getString("nextQuestion"), System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+                    }
+
+                }
+            }
         });
 
-    }
-    public void question2(ChatView chatView1){
-//        chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
-        chatView1.addMessage(new ChatMessage(questionsExtractor(1), System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
-
-    }
-
-    private String questionsExtractor(int index){
-        String question=null;
-        //TODO: Write this function to extract questions from the json provided by the infermedica API
-        //TODO: Hint - checkout JSONArray and JSONObject manipulation. Do small experiments and understand how to extract questions
-        return question;
     }
 }
 
