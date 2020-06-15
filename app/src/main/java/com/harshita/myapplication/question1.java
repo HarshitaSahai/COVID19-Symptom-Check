@@ -40,13 +40,15 @@ public class question1  extends AppCompatActivity {
     //WebView wv ;
     //String url = "https://covid-19.ada.com";
     JSONObject obj;
+    private ChatView chatView1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        setContentView(R.layout.question1);
 
-       final ChatView chatView1 = (ChatView) findViewById(R.id.chat_view);
+       chatView1 = findViewById(R.id.chat_view);
 
+       //TODO: Replace all messages with a function that extracts the question from the json
         chatView1.addMessage(new ChatMessage("Are you a male or female?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
         chatView1.setTypingListener(new ChatView.TypingListener() {
             @Override
@@ -63,14 +65,21 @@ public class question1  extends AppCompatActivity {
                 @Override
             public boolean sendMessage(ChatMessage chatMessage) {
                 String gen = chatMessage.getMessage();
+                //TODO: This function will get triggered everytime someone presses send button. Every time, the questions and responses will be different.
+                    //TODO: Use a switch case to know which question's answers you're getting here.
                 String gender = null;
-                if(gen == "male" || gen == "m"){
+                //TODO: don't use ==, use equalsIgnoreCase functions. Hint - see below example.
+                if(gen.equalsIgnoreCase("male") || gen == "m"){
                     gender = "male";
                 }
                 else if(gen == "female" || gen == "f"){
                     gender = "female";
                 }
-
+                // User can input anything apart from male/female. Stop that from getting sent
+                else{
+                    Toast.makeText(question1.this, "Please type male or female", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
 
                 JSONObject obj1;
                 try {
@@ -84,61 +93,26 @@ public class question1  extends AppCompatActivity {
 
                 }
                 Log.wtf("object here", String.valueOf(obj1));
+                question2(chatView1);
 
-
-//                Toast.makeText(question1.this, "Please type male or female", Toast.LENGTH_SHORT).show();
                 return true;
             }
 
 
         });
 
-
-
-
-       //addListenerOnButtonClick();
     }
     public void question2(ChatView chatView1){
-        chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+//        chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+        chatView1.addMessage(new ChatMessage(questionsExtractor(1), System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
 
     }
-   /* public void addListenerOnButtonClick() {
-        final RadioButton Male, Female;
 
-        Male = (RadioButton) findViewById(R.id.male);
-        Female = (RadioButton) findViewById(R.id.female);
-
-        Button getstarted1 = (Button) findViewById(R.id.toq2);
-        getstarted1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-
-
-                if (!Male.isChecked() && !Female.isChecked())
-                    Toast.makeText(question1.this, "Please Select Gender", Toast.LENGTH_SHORT).show();
-
-                else {
-                    final String gender;
-                    if (Male.isChecked())
-                        gender = "male";
-                    else
-                        gender = "female";
-                    JSONObject obj1;
-                    try {
-                        obj1 = new JSONObject();
-                        obj1.put("sex", gender);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        obj1 = null;
-                    }
-                    Intent i1 = new Intent(question1.this,question2.class).putExtra("jsonObject",obj1.toString());
-                    startActivity(i1);
-                }
-            }
-
-        });
-    }*/
+    private String questionsExtractor(int index){
+        String question=null;
+        //TODO: Write this function to extract questions from the json provided by the infermedica API
+        //TODO: Hint - checkout JSONArray and JSONObject manipulation. Do small experiments and understand how to extract questions
+        return question;
+    }
 }
 
