@@ -156,7 +156,9 @@ public class question1  extends AppCompatActivity {
     }
 
     public void messagehandler(final String str, View v){
+
         Handler handler = new Handler();
+        if(v == null){
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -174,7 +176,10 @@ public class question1  extends AppCompatActivity {
 
             }
 
-        });
+        });}
+        else{
+            
+        }
 
     }
     public <name> void getvr(JSONObject obj)
