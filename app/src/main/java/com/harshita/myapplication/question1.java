@@ -2,13 +2,12 @@
 package com.harshita.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
-import org.json.JSONObject;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -18,8 +17,16 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
-import co.intentservice.chatui.ChatView;
-import co.intentservice.chatui.models.ChatMessage;
+import com.harshita.myapplication.models.ChatMessage;
+import com.harshita.myapplication.views.ChatView;
+
+import org.json.JSONObject;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static com.harshita.myapplication.models.ChatMessage.Type.RECEIVED;
+import static com.harshita.myapplication.models.ChatMessage.Type.SENT;
 
 public class question1  extends AppCompatActivity {
 
@@ -35,9 +42,14 @@ public class question1  extends AppCompatActivity {
        setContentView(R.layout.question1);
 
        chatView1 = findViewById(R.id.chat_view);
-
        //TODO: Replace all messages with a function that extracts the question from the json
-        chatView1.addMessage(new ChatMessage("Are you a male or female?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+
+        //Sample view given here
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.sample_layout, null);
+
+        chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
+        chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), RECEIVED));
         chatView1.setTypingListener(new ChatView.TypingListener() {
             @Override
             public void userStartedTyping() {
@@ -109,7 +121,7 @@ public class question1  extends AppCompatActivity {
             public void onChanged(List<WorkInfo> workInfos) {
                 if(workInfos!=null && !workInfos.isEmpty()){
                     if(workInfos.get(0).getState().equals(WorkInfo.State.SUCCEEDED)){
-                        chatView1.addMessage(new ChatMessage(workInfos.get(0).getOutputData().getString("nextQuestion"), System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+                        chatView1.addMessage(new ChatMessage(workInfos.get(0).getOutputData().getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
                     }
                 }
             }
