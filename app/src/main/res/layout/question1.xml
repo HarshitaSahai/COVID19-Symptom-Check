@@ -60,7 +60,7 @@
             android:orientation="vertical"
             tools:context="co.intentservice.chatui.sample.question1">
 
-            <co.intentservice.chatui.ChatView
+            <com.harshita.myapplication.views.ChatView
                 android:id="@+id/chat_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -73,44 +73,7 @@
 
 
 <!-- TODO: Clean up the ui elements you don't need. If you later need them, you can always check the git commit where you removed the code and copy paste the same later -->
-            <TextView
-                android:id="@+id/question1"
-                android:layout_width="match_parent"
-                android:layout_height="142dp"
-                android:layout_gravity="center"
-                android:ems="10"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:inputType="textMultiLine"
 
-
-                android:text="Are you a male or female?"
-                android:textColor="#283593"
-                android:textSize="24sp"
-                android:textStyle="italic" />
-
-            <RadioGroup
-                android:id="@+id/RGroup1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
-
-                <RadioButton
-                    android:id="@+id/male"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="male"
-                    android:textSize="24sp" />
-
-                <RadioButton
-                    android:id="@+id/female"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="female"
-                    android:textSize="24sp" />
-
-
-            </RadioGroup>
 
 
         </LinearLayout>

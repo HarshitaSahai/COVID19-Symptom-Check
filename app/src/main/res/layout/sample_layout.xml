@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/material_sample_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@null"
+    android:layout_margin="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <RadioGroup
+        android:id="@+id/RGroup1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <RadioButton
+            android:id="@+id/male"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male"
+            android:textColor="@color/default_chat_message_background_color_rcv"
+            android:textSize="@dimen/default_message_text_size" />
+
+        <RadioButton
+            android:id="@+id/female"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Female"
+            android:textColor="@color/default_chat_message_background_color_rcv"
+            android:textSize="@dimen/default_input_text_size" />
+
+
+    </RadioGroup>
+
+</LinearLayout>
