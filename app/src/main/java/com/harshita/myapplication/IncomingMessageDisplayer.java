@@ -1,31 +1,38 @@
 package com.harshita.myapplication;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.TextView;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
-public class IncomingMessageDisplayer extends Worker{
+
+public class IncomingMessageDisplayer extends Worker {
 
     private JSONObject apiResponse;
+
     public IncomingMessageDisplayer(@NonNull Context context, @NonNull WorkerParameters workerParams) {
 
         super(context, workerParams);
-        try{
-            //TODO: this api response is a sample from the API. Load the actual api and pass it on as data to this class. Refer comment below this variable
-            apiResponse = new JSONObject("{\"conditions\":[],\"extras\":{}," +
-                    "\"question\":{\"explanation\":null," +
-                    "\"extras\":{}," +
-                    "\"items\":[{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_18\",\"name\":\"Current cancer\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A weakened immune system can be caused by many factors, e.g., cancer treatment, bone marrow or organ transplantation, poorly controlled HIV/AIDS or some congenital diseases. Also, it may be caused by prolonged use of immunosuppressant drugs such as corticosteroids, or drugs used for rheumatoid arthritis, psoriasis, and other autoimmune illnesses.\",\"id\":\"p_19\",\"name\":\"Diseases or drugs that weaken immune system\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A person is considered obese when his or her body mass index (BMI) exceeds 30.\",\"id\":\"p_24\",\"name\":\"Obesity\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_22\",\"name\":\"Long-term stay at a care facility or nursing home\"}],\"text\":\"Please select all statements that apply to you\",\"type\":\"group_multiple\"},\"should_stop\":false}");
-            //below comment is an example of how the variable should look
-//            apiResponse = new JSONObject(getInputData().getString("apiResponse"));
-
-        }catch (Exception e){e.printStackTrace();}
 
     }
 
