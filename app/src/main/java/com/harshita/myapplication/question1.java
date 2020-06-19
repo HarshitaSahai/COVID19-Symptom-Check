@@ -4,12 +4,34 @@ package com.harshita.myapplication;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -38,7 +60,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
     //WebView wv ;
     //String url = "https://covid-19.ada.com";
-    JSONObject obj;
+    //JSONObject obj;
     private ChatView chatView1;
     private int questionIndex =0;
     private JSONObject covidObject = new JSONObject();
@@ -85,7 +107,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         .build();
         workManager.enqueueUniqueWork("displayNextQuestion",ExistingWorkPolicy.REPLACE, displayNextQuestionRequest);
 
-        workManager.getWorkInfosForUniqueWorkLiveData("displayNextQuestion").observe(this, new Observer<List<WorkInfo>>() {
+            handler.postDelayed(new Runnable()
+        {
             @Override
             public void onChanged(List<WorkInfo> workInfos) {
                 if(workInfos!=null && !workInfos.isEmpty()){
@@ -107,8 +130,31 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         }
                     }
                 }
+
+                @Override
+                public void userStoppedTyping() {
+
+                }
+
+            });
+
+
+        }
+        else if(questionIndex == 3) {
+                final View view = inflater1.inflate(R.layout.question3, null);
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+                    }
+                }, 5000);
+
             }
-        });
+
+
+
+
 
     }
 
