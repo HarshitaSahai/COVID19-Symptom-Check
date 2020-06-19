@@ -70,12 +70,6 @@
                 chatview:bubbleBackgroundSend="@color/white"
                 chatview:inputHint="@string/start_typing"/>
 
-
-
-<!-- TODO: Clean up the ui elements you don't need. If you later need them, you can always check the git commit where you removed the code and copy paste the same later -->
-
-
-
         </LinearLayout>
 
 

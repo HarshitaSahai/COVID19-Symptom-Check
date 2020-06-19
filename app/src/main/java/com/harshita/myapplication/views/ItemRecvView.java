@@ -38,17 +38,13 @@ public class ItemRecvView extends MessageView {
     }
 
     public void setMessage(@NonNull View message) {
-        if(customView == null) {
-            customView = (LinearLayout) findViewById(R.id.message_custom_view) ;
-        }
-        /*for(int i=0;i<customView.getChildCount();i++){
-            ((ViewGroup)customView.getChildAt(i)).removeAllViews();
-        }*/
+
+        customView = new LinearLayout(getContext());
+        customView.setOrientation(LinearLayout.VERTICAL);
+
         try{
-            if(customView.getChildAt(0)==null){
-//                customView.removeView(message);
-                customView.addView(message);
-            }
+            customView.removeAllViewsInLayout();
+            customView.addView(message);
         }catch (Exception e){
             e.printStackTrace();
         }

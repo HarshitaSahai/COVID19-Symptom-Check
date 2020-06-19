@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,15 +22,18 @@ import androidx.work.WorkManager;
 import com.harshita.myapplication.models.ChatMessage;
 import com.harshita.myapplication.views.ChatView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.harshita.myapplication.models.ChatMessage.Type.RECEIVED;
 import static com.harshita.myapplication.models.ChatMessage.Type.SENT;
 
-public class question1  extends AppCompatActivity {
+public class question1  extends AppCompatActivity implements View.OnClickListener {
 
 
     //WebView wv ;
@@ -36,6 +41,7 @@ public class question1  extends AppCompatActivity {
     JSONObject obj;
     private ChatView chatView1;
     private int questionIndex =0;
+    private JSONObject covidObject = new JSONObject();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,75 +50,38 @@ public class question1  extends AppCompatActivity {
        chatView1 = findViewById(R.id.chat_view);
        //TODO: Replace all messages with a function that extracts the question from the json
 
-        //Sample view given here
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.sample_layout, null);
-
         chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
-        chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), RECEIVED));
-        chatView1.setTypingListener(new ChatView.TypingListener() {
-            @Override
-            public void userStartedTyping() {
-            }
-
-            @Override
-            public void userStoppedTyping() {
-
-            }
-
-        });
+        chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
 
         chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
                 @Override
             public boolean sendMessage(ChatMessage chatMessage) {
-                String gen = chatMessage.getMessage();
-                //TODO: This function will get triggered everytime someone presses send button. Every time, the questions and responses will be different.
-                    //TODO: Use a switch case to know which question's answers you're getting here.
-                String gender = null;
-                //TODO: don't use ==, use equalsIgnoreCase functions. Hint - see below example.
-                if(gen.equalsIgnoreCase("male") || gen == "m"){
-                    gender = "male";
-                }
-                else if(gen == "female" || gen == "f"){
-                    gender = "female";
-                }
-                // User can input anything apart from male/female. Stop that from getting sent
-                else{
-                    Toast.makeText(question1.this, "Please type male or female", Toast.LENGTH_SHORT).show();
+                    switch(questionIndex){
+                        case 0:
+                            return true;
+                    }
                     return false;
-                }
-
-                JSONObject obj1;
-                try {
-                    obj1 = new JSONObject();
-                    obj1.put("sex", gen);
-                   // obj.optJSONObject(obj1.toString());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    obj1 = null;
-
-                }
-                Log.wtf("object here", String.valueOf(obj1));
-                displayQuestions();
-
-                return true;
             }
 
         });
+        chatView1.setOnClickListener(this);
     }
 
+    private View question_1(){
+        //Sample view given here
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        return inflater.inflate(R.layout.sample_layout, null);
+    }
 
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
         //Add your API response just like how you did it for intents. -> Convert to String
         // e.g. code -> .putString("apiResponse",apiResponse.toString())
-        Data inputData = new Data.Builder().putInt("questionNumber",questionIndex).build();
 
         @SuppressLint("RestrictedApi") OneTimeWorkRequest displayNextQuestionRequest =
                 new OneTimeWorkRequest.Builder(IncomingMessageDisplayer.class)
-                        .setInitialDelay(2, TimeUnit.SECONDS)
-                        .setInputData(inputData)
+                        .setInitialDelay(20, TimeUnit.MILLISECONDS)
+//                        .setInputData(inputData)
                         .build();
         workManager.enqueueUniqueWork("displayNextQuestion",ExistingWorkPolicy.REPLACE, displayNextQuestionRequest);
 
@@ -121,12 +90,71 @@ public class question1  extends AppCompatActivity {
             public void onChanged(List<WorkInfo> workInfos) {
                 if(workInfos!=null && !workInfos.isEmpty()){
                     if(workInfos.get(0).getState().equals(WorkInfo.State.SUCCEEDED)){
-                        chatView1.addMessage(new ChatMessage(workInfos.get(0).getOutputData().getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
+
+                        Data outputDataFromWorker = workInfos.get(0).getOutputData();
+
+                        chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
+                        String items = outputDataFromWorker.getString("items");
+                        switch(Objects.requireNonNull(outputDataFromWorker.getString("type"))){
+                            case "group_multiple":
+                                chatView1.addMessage(new ChatMessage(groupMultipleTypeView(items),System.currentTimeMillis(), SENT));
+                                break;
+                            case "group_single":
+                                chatView1.addMessage(new ChatMessage(groupSingleTypeView(items),System.currentTimeMillis(), SENT));
+                                break;
+                            case "single":
+                                break;
+                        }
                     }
                 }
             }
         });
 
+    }
+
+    private View groupMultipleTypeView(String items){
+        try {
+            JSONArray itemsArray = new JSONArray(items);
+            LinearLayout checkboxHolder = new LinearLayout(this);
+            checkboxHolder.setOrientation(LinearLayout.VERTICAL);
+            for(int i=0; i<itemsArray.length();i++){
+                CheckBox selectableCheckBox = new CheckBox(this);
+                selectableCheckBox.setText(itemsArray.getJSONObject(i).getString("name"));
+                checkboxHolder.addView(selectableCheckBox,i);
+            }
+            checkboxHolder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(question1.this, "Clicked pa clicked :laugh", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return checkboxHolder;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private View groupSingleTypeView(String items){
+        return null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        try{
+            switch (v.getId()){
+                case R.id.male:
+                    covidObject.put("sex", "male");
+                    break;
+                case R.id.female:
+                    covidObject.put("sex","female");
+                    break;
+
+            }
+            questionIndex+=1;
+            displayQuestions();
+        }catch (Exception e){e.printStackTrace();}
     }
 }
 

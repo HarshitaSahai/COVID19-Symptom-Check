@@ -18,7 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Male"
-            android:textColor="@color/default_chat_message_background_color_rcv"
+            android:onClick="onClick"
+            android:textColor="@color/default_message_color_send"
             android:textSize="@dimen/default_message_text_size" />
 
         <RadioButton
@@ -26,7 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Female"
-            android:textColor="@color/default_chat_message_background_color_rcv"
+            android:onClick="onClick"
+            android:textColor="@color/default_message_color_send"
             android:textSize="@dimen/default_input_text_size" />
 
 

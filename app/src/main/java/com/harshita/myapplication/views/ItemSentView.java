@@ -39,19 +39,16 @@ public class ItemSentView extends MessageView {
     }
 
     public void setMessage(View message) {
-        if(customView == null) {
-            customView = (LinearLayout) findViewById(R.id.message_custom_view) ;
-        }
 
-        for(int i=0;i<customView.getChildCount();i++){
-            ((ViewGroup)customView.getChildAt(i)).removeAllViews();
-        }
+        customView = findViewById(R.id.message_custom_view);
+
         try{
-
+            customView.removeAllViewsInLayout();
             customView.addView(message);
         }catch (Exception e){
             e.printStackTrace();
         }
+
     }
 
     /**
