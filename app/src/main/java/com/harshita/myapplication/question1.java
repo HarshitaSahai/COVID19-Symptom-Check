@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.Toast;
 import android.view.View;
 import android.widget.TextView;
@@ -58,16 +59,6 @@ public class question1  extends AppCompatActivity {
     //JSONObject obj;
     private ChatView chatView1;
     private int questionIndex =1;
-    String jsonString = " ";
-    JSONObject obj;
-
-    {
-        try {
-            obj = new JSONObject(jsonString);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,14 +69,17 @@ public class question1  extends AppCompatActivity {
        //TODO: Replace all messages with a function that extracts the question from the json
 
         //Sample view given here
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.sample_layout, null);
 
-        chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
+        //chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
         chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), RECEIVED));
         chatView1.setTypingListener(new ChatView.TypingListener() {
             @Override
             public void userStartedTyping() {
+
+
             }
 
             @Override
@@ -117,11 +111,11 @@ public class question1  extends AppCompatActivity {
                                       return false;
                                   }
 
-                                  //JSONObject obj1;
+                                  JSONObject obj1;
                                   try {
-                                      //obj1 = new JSONObject();
-                                      obj.put("sex", gender);
-                                      Log.wtf("object here", obj.toString());
+                                      obj1 = new JSONObject();
+                                      obj1.put("sex", gender);
+                                      Log.wtf("object here", obj1.toString());
 
                                       //obj.optJSONObject(obj1.toString());
 
@@ -130,23 +124,37 @@ public class question1  extends AppCompatActivity {
                                       // obj1 = null;
 
                                   }
-                                  Log.wtf("object here", String.valueOf(obj));
+                                  //Log.wtf("object here", String.valueOf(obj1));
                                   questionIndex = questionIndex + 1;
                                   displayQuestions(questionIndex);
                                   break;
                   case  2:        String age = chatMessage.getMessage();
-                                  //JSONObject obj2;
+                                  JSONObject obj2;
                                   try {
-                                     // obj2 = new JSONObject();
-                                      obj.put("age", Integer.parseInt(age));
+                                     obj2 = new JSONObject();
+                                      obj2.put("age", Integer.parseInt(age));
                                        //obj.optJSONObject(obj2.toString());
-                                      Log.wtf("object here", obj.toString());
+                                      Log.wtf("object here", obj2.toString());
                                   } catch (JSONException e) {
                                       e.printStackTrace();
                                   }
                                   questionIndex = questionIndex + 1;
                                   displayQuestions(questionIndex);
                                   break;
+                  case 3:         String option1 = chatMessage.getMessage();
+                                  JSONObject obj3;
+                                  try {
+                                      obj3 = new JSONObject();
+                                      obj3.put("evidence", option1);
+                                      //obj.optJSONObject(obj2.toString());
+                                      Log.wtf("object here", obj3.toString());
+                                  } catch (JSONException e) {
+                                      e.printStackTrace();
+                                  }
+                                  questionIndex = questionIndex + 1;
+                                  //displayQuestions(questionIndex);
+                                  break;
+
 
 
 
@@ -162,40 +170,66 @@ public class question1  extends AppCompatActivity {
 
     private void displayQuestions(int questionIndex){
         //WorkManager workManager = WorkManager.getInstance(this);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         switch (questionIndex) {
 
-            case 2:     messagehandler("What is your age?",null);
+            case 2:     messagehandler("What is your age?",questionIndex);
                         break;
-            case 3:     messagehandler(null,null);
+            case 3:     messagehandler(null,questionIndex);
                         break;
         }
 
     }
 
-    public void messagehandler(final String str, View v){
+    public void messagehandler(final String str,int questionIndex){
 
+        LayoutInflater inflater1 = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         Handler handler = new Handler();
-        if(v == null){
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                chatView1.addMessage(new ChatMessage(str, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
-            }
-        }, 5000);
-        chatView1.setTypingListener(new ChatView.TypingListener() {
-            @Override
-            public void userStartedTyping() {
-            }
+        if(questionIndex == 2){
+            final View view = inflater1.inflate(R.layout.nq2, null);
 
+           //chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+
+            handler.postDelayed(new Runnable()
+        {
             @Override
-            public void userStoppedTyping() {
+            public void run()
+            {
+                chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
 
+
+                //chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
             }
+        }, 1000);
+            chatView1.setTypingListener(new ChatView.TypingListener() {
+                @Override
+                public void userStartedTyping() {
+                }
 
-        });}
-        else{
-            
+                @Override
+                public void userStoppedTyping() {
+
+                }
+
+            });
+
+
         }
+        else if(questionIndex == 3) {
+                final View view = inflater1.inflate(R.layout.question3, null);
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+                    }
+                }, 5000);
+
+            }
+
+
+
+
 
     }
     public <name> void getvr(JSONObject obj)
