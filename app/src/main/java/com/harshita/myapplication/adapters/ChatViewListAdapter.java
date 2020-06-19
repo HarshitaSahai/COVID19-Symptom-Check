@@ -91,6 +91,7 @@ public class ChatViewListAdapter extends BaseAdapter {
         message = chatMessages.get(position).getMessage();
         message_view = chatMessages.get(position).getView();
 
+
         if(message!=null && !message.isEmpty())
             holder.setMessage(message);
         else

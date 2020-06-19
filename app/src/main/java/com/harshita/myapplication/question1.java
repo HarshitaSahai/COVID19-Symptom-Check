@@ -8,7 +8,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RadioButton;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.view.View;
 import android.widget.TextView;
@@ -43,23 +44,26 @@ import androidx.work.WorkManager;
 import com.harshita.myapplication.models.ChatMessage;
 import com.harshita.myapplication.views.ChatView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.harshita.myapplication.models.ChatMessage.Type.RECEIVED;
 import static com.harshita.myapplication.models.ChatMessage.Type.SENT;
 
-public class question1  extends AppCompatActivity {
+public class question1  extends AppCompatActivity implements View.OnClickListener {
 
 
     //WebView wv ;
     //String url = "https://covid-19.ada.com";
     //JSONObject obj;
     private ChatView chatView1;
-    private int questionIndex =1;
-
+    private int questionIndex =0;
+    private JSONObject covidObject = new JSONObject();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,142 +72,63 @@ public class question1  extends AppCompatActivity {
        chatView1 = findViewById(R.id.chat_view);
        //TODO: Replace all messages with a function that extracts the question from the json
 
-        //Sample view given here
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.sample_layout, null);
-
-        //chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
-        chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), RECEIVED));
-        chatView1.setTypingListener(new ChatView.TypingListener() {
-            @Override
-            public void userStartedTyping() {
-
-
-            }
-
-            @Override
-            public void userStoppedTyping() {
-
-            }
-
-        });
+        chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
+        chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
 
         chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
                 @Override
             public boolean sendMessage(ChatMessage chatMessage) {
-
-
-              switch (questionIndex) {
-                  case 1:         String gen = chatMessage.getMessage();
-                                  //TODO: This function will get triggered everytime someone presses send button. Every time, the questions and responses will be different.
-                                  //TODO: Use a switch case to know which question's answers you're getting here.
-                                  String gender = null;
-                                  //TODO: don't use ==, use equalsIgnoreCase functions. Hint - see below example.
-                                  if (gen.equalsIgnoreCase("male") || gen == "m") {
-                                      gender = "male";
-                                  } else if (gen.equalsIgnoreCase("female") || gen == "f") {
-                                      gender = "female";
-                                  }
-                                  // User can input anything apart from male/female. Stop that from getting sent
-                                  else {
-                                      Toast.makeText(question1.this, "Please type male or female", Toast.LENGTH_SHORT).show();
-                                      return false;
-                                  }
-
-                                  JSONObject obj1;
-                                  try {
-                                      obj1 = new JSONObject();
-                                      obj1.put("sex", gender);
-                                      Log.wtf("object here", obj1.toString());
-
-                                      //obj.optJSONObject(obj1.toString());
-
-                                  } catch (Exception e) {
-                                      e.printStackTrace();
-                                      // obj1 = null;
-
-                                  }
-                                  //Log.wtf("object here", String.valueOf(obj1));
-                                  questionIndex = questionIndex + 1;
-                                  displayQuestions(questionIndex);
-                                  break;
-                  case  2:        String age = chatMessage.getMessage();
-                                  JSONObject obj2;
-                                  try {
-                                     obj2 = new JSONObject();
-                                      obj2.put("age", Integer.parseInt(age));
-                                       //obj.optJSONObject(obj2.toString());
-                                      Log.wtf("object here", obj2.toString());
-                                  } catch (JSONException e) {
-                                      e.printStackTrace();
-                                  }
-                                  questionIndex = questionIndex + 1;
-                                  displayQuestions(questionIndex);
-                                  break;
-                  case 3:         String option1 = chatMessage.getMessage();
-                                  JSONObject obj3;
-                                  try {
-                                      obj3 = new JSONObject();
-                                      obj3.put("evidence", option1);
-                                      //obj.optJSONObject(obj2.toString());
-                                      Log.wtf("object here", obj3.toString());
-                                  } catch (JSONException e) {
-                                      e.printStackTrace();
-                                  }
-                                  questionIndex = questionIndex + 1;
-                                  //displayQuestions(questionIndex);
-                                  break;
-
-
-
-
-              }
-
-
-                return true;
+                    switch(questionIndex){
+                        case 0:
+                            return true;
+                    }
+                    return false;
             }
 
         });
+        chatView1.setOnClickListener(this);
     }
 
-
-    private void displayQuestions(int questionIndex){
-        //WorkManager workManager = WorkManager.getInstance(this);
+    private View question_1(){
+        //Sample view given here
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        switch (questionIndex) {
-
-            case 2:     messagehandler("What is your age?",questionIndex);
-                        break;
-            case 3:     messagehandler(null,questionIndex);
-                        break;
-        }
-
+        return inflater.inflate(R.layout.sample_layout, null);
     }
 
-    public void messagehandler(final String str,int questionIndex){
+    private void displayQuestions(){
+        WorkManager workManager = WorkManager.getInstance(this);
+        //Add your API response just like how you did it for intents. -> Convert to String
+        // e.g. code -> .putString("apiResponse",apiResponse.toString())
 
-        LayoutInflater inflater1 = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        Handler handler = new Handler();
-        if(questionIndex == 2){
-            final View view = inflater1.inflate(R.layout.nq2, null);
-
-           //chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+        @SuppressLint("RestrictedApi") OneTimeWorkRequest displayNextQuestionRequest =
+                new OneTimeWorkRequest.Builder(IncomingMessageDisplayer.class)
+                        .setInitialDelay(20, TimeUnit.MILLISECONDS)
+//                        .setInputData(inputData)
+                        .build();
+        workManager.enqueueUniqueWork("displayNextQuestion",ExistingWorkPolicy.REPLACE, displayNextQuestionRequest);
 
             handler.postDelayed(new Runnable()
         {
             @Override
-            public void run()
-            {
-                chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+            public void onChanged(List<WorkInfo> workInfos) {
+                if(workInfos!=null && !workInfos.isEmpty()){
+                    if(workInfos.get(0).getState().equals(WorkInfo.State.SUCCEEDED)){
 
+                        Data outputDataFromWorker = workInfos.get(0).getOutputData();
 
-                //chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
-            }
-        }, 1000);
-            chatView1.setTypingListener(new ChatView.TypingListener() {
-                @Override
-                public void userStartedTyping() {
+                        chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
+                        String items = outputDataFromWorker.getString("items");
+                        switch(Objects.requireNonNull(outputDataFromWorker.getString("type"))){
+                            case "group_multiple":
+                                chatView1.addMessage(new ChatMessage(groupMultipleTypeView(items),System.currentTimeMillis(), SENT));
+                                break;
+                            case "group_single":
+                                chatView1.addMessage(new ChatMessage(groupSingleTypeView(items),System.currentTimeMillis(), SENT));
+                                break;
+                            case "single":
+                                break;
+                        }
+                    }
                 }
 
                 @Override
@@ -232,60 +157,50 @@ public class question1  extends AppCompatActivity {
 
 
     }
-    public <name> void getvr(JSONObject obj)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://api.infermedica.com/covid19/diagnosis/";
 
-        JsonObjectRequest getRequest = new JsonObjectRequest(
-                Request.Method.POST
-                ,  url,obj, new com.android.volley.Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response)
-            {
-
-
-                    Log.d("question",response.toString());
-
-                  //  TextView tv = (TextView)findViewById(R.id.result);
-                 //   tv.setText(response.getString("description"));
-
-                //Log.d("description", response.toString());
-                //textView.setText(response);
-
-
-
+    private View groupMultipleTypeView(String items){
+        try {
+            JSONArray itemsArray = new JSONArray(items);
+            LinearLayout checkboxHolder = new LinearLayout(this);
+            checkboxHolder.setOrientation(LinearLayout.VERTICAL);
+            for(int i=0; i<itemsArray.length();i++){
+                CheckBox selectableCheckBox = new CheckBox(this);
+                selectableCheckBox.setText(itemsArray.getJSONObject(i).getString("name"));
+                checkboxHolder.addView(selectableCheckBox,i);
             }
-        }, new com.android.volley.Response.ErrorListener()
-        {
-            @Override
-            public void onErrorResponse(VolleyError error)
-            {
-                Log.d("ERROR","error => "+error.toString());
-                error.printStackTrace();
+            checkboxHolder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(question1.this, "Clicked pa clicked :laugh", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return checkboxHolder;
 
-            }
-        }){
-
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError
-            {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("Content-Type","application/json");
-                params.put("App-Id", "fd9740f0");
-                params.put("App-Key", "369c63fe2ab752b87ac60189d368a7e1");
-                params.put("Content-Type","application/json");
-                params.put("sex", "male");
-                params.put("age", "21");
-                params.put("evidence","[ ]");
-
-
-                return params;
-            }
-        };
-        queue.add(getRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
+    private View groupSingleTypeView(String items){
+        return null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        try{
+            switch (v.getId()){
+                case R.id.male:
+                    covidObject.put("sex", "male");
+                    break;
+                case R.id.female:
+                    covidObject.put("sex","female");
+                    break;
+
+            }
+            questionIndex+=1;
+            displayQuestions();
+        }catch (Exception e){e.printStackTrace();}
+    }
 }
 
