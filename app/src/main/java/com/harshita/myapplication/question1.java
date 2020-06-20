@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.view.View;
 import android.widget.TextView;
@@ -67,22 +69,22 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       setContentView(R.layout.question1);
+        setContentView(R.layout.question1);
 
-       chatView1 = findViewById(R.id.chat_view);
+        chatView1 = findViewById(R.id.chat_view);
 
-       chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
-       chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
-       chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
-           @Override
-           public boolean sendMessage(ChatMessage chatMessage) {
+        chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
+        chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
+        chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
+            @Override
+            public boolean sendMessage(ChatMessage chatMessage) {
                 //TODO: this function is still incomplete, need to think through the implementation
                 switch(questionIndex){
                     case 0:
                         return true;
                 }
                 return false;
-           }
+            }
 
         });
         chatView1.setOnClickListener(this);
@@ -138,7 +140,9 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
             return new JSONObject("{\"conditions\":[],\"extras\":{}," +
                     "\"question\":{\"explanation\":null," +
                     "\"extras\":{}," +
-                    "\"items\":[{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_18\",\"name\":\"Current cancer\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A weakened immune system can be caused by many factors, e.g., cancer treatment, bone marrow or organ transplantation, poorly controlled HIV/AIDS or some congenital diseases. Also, it may be caused by prolonged use of immunosuppressant drugs such as corticosteroids, or drugs used for rheumatoid arthritis, psoriasis, and other autoimmune illnesses.\",\"id\":\"p_19\",\"name\":\"Diseases or drugs that weaken immune system\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A person is considered obese when his or her body mass index (BMI) exceeds 30.\",\"id\":\"p_24\",\"name\":\"Obesity\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_22\",\"name\":\"Long-term stay at a care facility or nursing home\"}],\"text\":\"Please select all statements that apply to you\",\"type\":\"group_multiple\"},\"should_stop\":false}");
+                    "\"items\":[{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_18\",\"name\":\"Current cancer\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A weakened immune system can be caused by many factors, e.g., cancer treatment, bone marrow or organ transplantation, poorly controlled HIV/AIDS or some congenital diseases. Also, it may be caused by prolonged use of immunosuppressant drugs such as corticosteroids, or drugs used for rheumatoid arthritis, psoriasis, and other autoimmune illnesses.\",\"id\":\"p_19\",\"name\":\"Diseases or drugs that weaken immune system\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A person is considered obese when his or her body mass index (BMI) exceeds 30.\",\"id\":\"p_24\",\"name\":\"Obesity\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_22\",\"name\":\"Long-term stay at a care facility or nursing home\"}],\"text\":\"Please select all statements that apply to you\",\"type\":\"group_single\"},\"should_stop\":false}");
+            //return new JSONObject("\"question\":{\"tverype\":\"group_single\",\"text\":\"How high is your fever?\",\"items\":[{\"id\":\"s_3\",\"name\":\"Between 37.5\u00b0C and 40\u00b0C (99.5\u00b0F and 104\u00b0F)\",\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}]},{\"id\":\"s_4\",\"name\":\"Greater than 40\u00b0C (104\u00b0F)\",\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}]},{\"id\":\"s_5\",\"name\":\"I haven\u2019t measured\",\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}]}],\"extras\":{}}");
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -172,6 +176,30 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
     private View groupSingleTypeView(String items){
         //TODO: Need to write this view, with Radio group as only one of the options should be selected
+        try {
+            JSONArray itemsArray = new JSONArray(items);
+            LinearLayout ll = new LinearLayout(this);
+            //RadioGroup radiogroup = new RadioGroup(this);
+            //radiogroup.setOrientation(ll.VERTICAL);
+            RadioGroup radiobuttonHolder = new RadioGroup(this);
+            radiobuttonHolder.setOrientation(ll.VERTICAL);
+            for(int i=0; i<itemsArray.length();i++){
+                RadioButton selectableRadioButton = new RadioButton(this);
+                selectableRadioButton.setText(itemsArray.getJSONObject(i).getString("name"));
+                radiobuttonHolder.addView(selectableRadioButton,i);
+            }
+            radiobuttonHolder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(question1.this, "Clicked pa clicked :laugh", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return radiobuttonHolder;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
