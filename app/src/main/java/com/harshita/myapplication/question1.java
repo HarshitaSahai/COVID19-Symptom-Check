@@ -70,20 +70,19 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
        setContentView(R.layout.question1);
 
        chatView1 = findViewById(R.id.chat_view);
-       //TODO: Replace all messages with a function that extracts the question from the json
 
-        chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
-        chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
-
-        chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
-                @Override
-            public boolean sendMessage(ChatMessage chatMessage) {
-                    switch(questionIndex){
-                        case 0:
-                            return true;
-                    }
-                    return false;
-            }
+       chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
+       chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
+       chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
+           @Override
+           public boolean sendMessage(ChatMessage chatMessage) {
+                //TODO: this function is still incomplete, need to think through the implementation
+                switch(questionIndex){
+                    case 0:
+                        return true;
+                }
+                return false;
+           }
 
         });
         chatView1.setOnClickListener(this);
@@ -98,17 +97,15 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
         //Add your API response just like how you did it for intents. -> Convert to String
-        // e.g. code -> .putString("apiResponse",apiResponse.toString())
+        Data inputData = new Data.Builder().putString("apiResponse",getAPIJson().toString()).build();
 
         @SuppressLint("RestrictedApi") OneTimeWorkRequest displayNextQuestionRequest =
                 new OneTimeWorkRequest.Builder(IncomingMessageDisplayer.class)
-                        .setInitialDelay(20, TimeUnit.MILLISECONDS)
-//                        .setInputData(inputData)
+                        .setInputData(inputData)
                         .build();
         workManager.enqueueUniqueWork("displayNextQuestion",ExistingWorkPolicy.REPLACE, displayNextQuestionRequest);
 
-            handler.postDelayed(new Runnable()
-        {
+        workManager.getWorkInfosForUniqueWorkLiveData("displayNextQuestion").observe(this, new Observer<List<WorkInfo>>() {
             @Override
             public void onChanged(List<WorkInfo> workInfos) {
                 if(workInfos!=null && !workInfos.isEmpty()){
@@ -130,32 +127,23 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         }
                     }
                 }
-
-                @Override
-                public void userStoppedTyping() {
-
-                }
-
-            });
-
-
-        }
-        else if(questionIndex == 3) {
-                final View view = inflater1.inflate(R.layout.question3, null);
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        chatView1.addMessage(new ChatMessage(view, System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
-                    }
-                }, 5000);
-
             }
+        });
 
-
-
-
-
+    }
+    //This is a sample api response.
+    // TODO : Use this function to call the actual api and return the response
+    private JSONObject getAPIJson(){
+        try {
+            return new JSONObject("{\"conditions\":[],\"extras\":{}," +
+                    "\"question\":{\"explanation\":null," +
+                    "\"extras\":{}," +
+                    "\"items\":[{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_18\",\"name\":\"Current cancer\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A weakened immune system can be caused by many factors, e.g., cancer treatment, bone marrow or organ transplantation, poorly controlled HIV/AIDS or some congenital diseases. Also, it may be caused by prolonged use of immunosuppressant drugs such as corticosteroids, or drugs used for rheumatoid arthritis, psoriasis, and other autoimmune illnesses.\",\"id\":\"p_19\",\"name\":\"Diseases or drugs that weaken immune system\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A person is considered obese when his or her body mass index (BMI) exceeds 30.\",\"id\":\"p_24\",\"name\":\"Obesity\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_22\",\"name\":\"Long-term stay at a care facility or nursing home\"}],\"text\":\"Please select all statements that apply to you\",\"type\":\"group_multiple\"},\"should_stop\":false}");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Returns empty object in case the above creation of json object fails
+        return new JSONObject();
     }
 
     private View groupMultipleTypeView(String items){
@@ -183,6 +171,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     }
 
     private View groupSingleTypeView(String items){
+        //TODO: Need to write this view, with Radio group as only one of the options should be selected
         return null;
     }
 
