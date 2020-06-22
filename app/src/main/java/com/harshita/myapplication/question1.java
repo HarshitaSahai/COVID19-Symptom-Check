@@ -3,11 +3,13 @@ package com.harshita.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -31,6 +33,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +74,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private JSONObject covidObject = new JSONObject();
     private JSONObject apiResponse = new JSONObject();
     private MutableLiveData<JSONObject> responseAlert = new MutableLiveData<>();
-    private String agebyuser;
-
+    //private String agebyuser;
+    private  JSONArray evidence = new JSONArray(); //Array for storing id and choice
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,20 +213,82 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
     private View groupMultipleTypeView(String items){
         try {
-            JSONArray itemsArray = new JSONArray(items);
-            LinearLayout checkboxHolder = new LinearLayout(this);
+            final JSONArray itemsArray = new JSONArray(items);
+            final LinearLayout checkboxHolder = new LinearLayout(this);
             checkboxHolder.setOrientation(LinearLayout.VERTICAL);
-            for(int i=0; i<itemsArray.length();i++){
-                CheckBox selectableCheckBox = new CheckBox(this);
-                selectableCheckBox.setText(itemsArray.getJSONObject(i).getString("name"));
-                checkboxHolder.addView(selectableCheckBox,i);
+            final CheckBox[] cbs; // Checkbox array
+            cbs = new CheckBox[itemsArray.length()]; // Size of array
+            Button bgmp = new Button(this);
+            bgmp.setText("Next"); // Button for storing value in evidence[]
+
+            for(int i=0;i<itemsArray.length();i++)
+            {
+                cbs[i] = new CheckBox(this); //here i is iteration variable
+                cbs[i].setText(itemsArray.getJSONObject(i).getString("name")); // Storing content
+                checkboxHolder.addView(cbs[i]);
             }
+            checkboxHolder.addView(bgmp); // Adding button to view
+
+
             checkboxHolder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(question1.this, "Clicked pa clicked :laugh", Toast.LENGTH_SHORT).show();
                 }
             });
+
+
+            bgmp.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    JSONObject cjo[ ] = new  JSONObject[itemsArray.length()];// Array to store current checbox value (question4 line 55 - 59)
+
+                    for(int i = 0;i<itemsArray.length();i++)
+                    {
+                        // TODO : cjo[] referring to null object prevent that
+
+                        if(cbs[i].isChecked()){
+                            try {
+                                cjo[i].put("id",itemsArray.getJSONObject(i).getString("id")); // Getting the id from item
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                cjo[i].put("choice","present"); // Storing present if checked
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }else{
+                            try {
+                                cjo[i].put("id",itemsArray.getJSONObject(i).getString("id")); // Getting the id for item
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                cjo[i].put("choice","absent"); // Storing absent if not checked
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                        evidence.put(cjo[i]); // Appending the value in evidence "Can also be done after stroing value in every cjo"
+
+                    }
+
+                    questionIndex+=1;
+                    // question4 line 209
+                    try {
+                        covidObject.put("evidence",evidence);
+                        Log.wtf("object here",evidence.toString());
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    getAPIJson();
+                }
+            });
+
             return checkboxHolder;
 
         } catch (JSONException e) {
@@ -287,7 +353,6 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
             }
 
             questionIndex+=1;
-//            displayQuestions();
             getAPIJson();
         }catch (Exception e){e.printStackTrace();}
     }
