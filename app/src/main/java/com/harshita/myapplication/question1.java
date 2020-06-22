@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
@@ -66,6 +67,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private ChatView chatView1;
     private int questionIndex =0;
     private JSONObject covidObject = new JSONObject();
+    private JSONObject apiResponse = new JSONObject();
+    private MutableLiveData<JSONObject> responseAlert = new MutableLiveData<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +92,13 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
         });
         chatView1.setOnClickListener(this);
+
+        responseAlert.observe(this, new Observer<JSONObject>() {
+            @Override
+            public void onChanged(JSONObject jsonObject) {
+                displayQuestions();
+            }
+        });
     }
 
     private View question_1(){
@@ -100,7 +110,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
         //Add your API response just like how you did it for intents. -> Convert to String
-        Data inputData = new Data.Builder().putString("apiResponse",getAPIJson().toString()).build();
+        Data inputData = new Data.Builder().putString("apiResponse",apiResponse.toString()).build();
 
         @SuppressLint("RestrictedApi") OneTimeWorkRequest displayNextQuestionRequest =
                 new OneTimeWorkRequest.Builder(IncomingMessageDisplayer.class)
@@ -136,10 +146,11 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     }
     //This is a sample api response.
     // TODO : Use this function to call the actual api and return the response
-    private JSONObject getAPIJson(){
+    private void getAPIJson(){
         try {
             RequestQueue queue = Volley.newRequestQueue(this);
-            String url = "https://api.infermedica.com/covid19/diagnosis/";
+            String url = "https://api.infermedica.com/covid19/diagnosis";
+            Log.wtf("covied obejct", covidObject.toString());
 
             JsonObjectRequest getRequest = new JsonObjectRequest(
                     Request.Method.POST
@@ -147,16 +158,10 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                 @Override
                 public void onResponse(JSONObject response)
                 {
+                    apiResponse = response;
+                    responseAlert.setValue(apiResponse);
 
-
-                    Log.d("question", response.toString());
-                    //textView.setText(response);
-
-                    try {
-                        String text = response.getString("text");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    Log.wtf("question", response.toString());
 
                 }
             }, new com.android.volley.Response.ErrorListener()
@@ -172,7 +177,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
 
                 @Override
-                public Map<String, String> getHeaders() throws AuthFailureError
+                public Map<String, String> getHeaders()
                 {
                     Map<String, String>  params = new HashMap<String, String>();
                     params.put("Content-Type","application/json");
@@ -184,18 +189,10 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
             };
            // return getRequest;
             queue.add(getRequest);
-            //return getRequest;
-            return new JSONObject("{\"conditions\":[],\"extras\":{}," +
-                    "\"question\":{\"explanation\":null," +
-                  "\"extras\":{}," +
-                    "\"items\":[{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_18\",\"name\":\"Current cancer\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A weakened immune system can be caused by many factors, e.g., cancer treatment, bone marrow or organ transplantation, poorly controlled HIV/AIDS or some congenital diseases. Also, it may be caused by prolonged use of immunosuppressant drugs such as corticosteroids, or drugs used for rheumatoid arthritis, psoriasis, and other autoimmune illnesses.\",\"id\":\"p_19\",\"name\":\"Diseases or drugs that weaken immune system\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":\"A person is considered obese when his or her body mass index (BMI) exceeds 30.\",\"id\":\"p_24\",\"name\":\"Obesity\"},{\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}],\"explanation\":null,\"id\":\"p_22\",\"name\":\"Long-term stay at a care facility or nursing home\"}],\"text\":\"Please select all statements that apply to you\",\"type\":\"group_single\"},\"should_stop\":false}");
-            //return new JSONObject("\"question\":{\"tverype\":\"group_single\",\"text\":\"How high is your fever?\",\"items\":[{\"id\":\"s_3\",\"name\":\"Between 37.5\u00b0C and 40\u00b0C (99.5\u00b0F and 104\u00b0F)\",\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}]},{\"id\":\"s_4\",\"name\":\"Greater than 40\u00b0C (104\u00b0F)\",\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}]},{\"id\":\"s_5\",\"name\":\"I haven\u2019t measured\",\"choices\":[{\"id\":\"present\",\"label\":\"Yes\"},{\"id\":\"absent\",\"label\":\"No\"}]}],\"extras\":{}}");
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        //Returns empty object in case the above creation of json object fails
-        return new JSONObject();
     }
 
     private View groupMultipleTypeView(String items){
@@ -257,18 +254,19 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
             switch (v.getId()){
                 case R.id.male:
                     covidObject.put("sex", "male");
-                    covidObject.put("age", "21");
-                    covidObject.put("evidence", "[ ]");
+                    covidObject.put("age", 21);
+                    covidObject.put("evidence", new JSONArray());
                     break;
                 case R.id.female:
                     covidObject.put("sex","female");
-                    covidObject.put("age", "21");
-                    covidObject.put("evidence", "[ ]");
+                    covidObject.put("age", 21);
+                    covidObject.put("evidence", new JSONArray());
                     break;
 
             }
             questionIndex+=1;
-            displayQuestions();
+//            displayQuestions();
+            getAPIJson();
         }catch (Exception e){e.printStackTrace();}
     }
 }
