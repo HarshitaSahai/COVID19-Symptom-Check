@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -69,6 +70,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private JSONObject covidObject = new JSONObject();
     private JSONObject apiResponse = new JSONObject();
     private MutableLiveData<JSONObject> responseAlert = new MutableLiveData<>();
+    private String agebyuser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,9 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                 switch(questionIndex){
                     case 0:
                         return true;
+
+                    case 1:
+
                 }
                 return false;
             }
@@ -106,6 +112,11 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         return inflater.inflate(R.layout.sample_layout, null);
     }
+ /* private View question_2(){
+        //Sample view given here
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        return inflater.inflate(R.layout.question2, null);
+    }*/
 
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
@@ -150,7 +161,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         try {
             RequestQueue queue = Volley.newRequestQueue(this);
             String url = "https://api.infermedica.com/covid19/diagnosis";
-            Log.wtf("covied obejct", covidObject.toString());
+            Log.wtf("covid obejct", covidObject.toString());
 
             JsonObjectRequest getRequest = new JsonObjectRequest(
                     Request.Method.POST
@@ -187,8 +198,9 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                     return params;
                 }
             };
-           // return getRequest;
+           //return getRequest;
             queue.add(getRequest);
+            //return covidObject;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -252,18 +264,28 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     public void onClick(View v) {
         try{
             switch (v.getId()){
-                case R.id.male:
-                    covidObject.put("sex", "male");
-                    covidObject.put("age", 21);
-                    covidObject.put("evidence", new JSONArray());
-                    break;
-                case R.id.female:
-                    covidObject.put("sex","female");
-                    covidObject.put("age", 21);
-                    covidObject.put("evidence", new JSONArray());
+                case R.id.toq2:
+                    RadioButton m = (RadioButton)findViewById(R.id.male);
+                    RadioButton f = (RadioButton)findViewById(R.id.female);
+                    if(m.isChecked()){
+                    covidObject.put("sex","male");
+                    covidObject.put("age",21);
+                        covidObject.put("evidence", new JSONArray());}
+                    else if(f.isChecked()){
+                        covidObject.put("sex","female");
+                        covidObject.put("age",21);
+                        covidObject.put("evidence", new JSONArray()); }
+                    else{
+                        Toast.makeText(question1.this, "Select male or female!", Toast.LENGTH_SHORT).show();
+
+                    }
                     break;
 
+
+
+
             }
+
             questionIndex+=1;
 //            displayQuestions();
             getAPIJson();
