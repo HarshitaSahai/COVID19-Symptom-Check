@@ -230,12 +230,12 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
             checkboxHolder.addView(bgmp); // Adding button to view
 
 
-            checkboxHolder.setOnClickListener(new View.OnClickListener() {
+            /*checkboxHolder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(question1.this, "Clicked pa clicked :laugh", Toast.LENGTH_SHORT).show();
                 }
-            });
+            });*/
 
 
             bgmp.setOnClickListener( new View.OnClickListener() {
@@ -272,7 +272,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                             }
 
                         }
-                        evidence.put(cjo[i]); // Appending the value in evidence "Can also be done after stroing value in every cjo"
+                        evidence.put(cjo[i]); // Appending the value in evidence "Can also be done after stroing value in every cjo" (question 4 line 77)
 
                     }
 
