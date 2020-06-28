@@ -54,6 +54,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private MutableLiveData<JSONObject> responseAlert = new MutableLiveData<>();
     //private String agebyuser;
     private  JSONArray evidence = new JSONArray(); //Array for storing id and choice
+    private String singleQuestionChoiceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,21 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
         chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
         chatView1.setOnClickListener(this);
+
+//        chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
+//            @Override
+//            public boolean sendMessage(ChatMessage chatMessage) {
+//                String message = chatMessage.getMessage().toLowerCase();
+//                switch (message){
+//                    case "yes":
+//                    case "no":
+//                        evidence.put()
+//                        break;
+//                    default:
+//                        Toast.makeText(question1.this, "Please say yes or no", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
         responseAlert.observe(this, new Observer<JSONObject>() {
             @Override
@@ -80,7 +96,6 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         return inflater.inflate(R.layout.sample_layout, null);
     }
 
-    private String currentTime;
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
         Data inputData = new Data.Builder().putString("apiResponse",apiResponse.toString()).build();
@@ -105,10 +120,11 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                             case "group_multiple":
                                 chatView1.addMessage(new ChatMessage(groupMultipleTypeView(items),System.currentTimeMillis(), SENT));
                                 break;
+                            case "single":
+                                chatView1.addMessage(new ChatMessage(singleTypeView(items),System.currentTimeMillis(), SENT));
+                                break;
                             case "group_single":
                                 chatView1.addMessage(new ChatMessage(groupSingleTypeView(items),System.currentTimeMillis(), SENT));
-                                break;
-                            case "single":
                                 break;
                         }
                     }
@@ -116,6 +132,10 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
             }
         });
 
+    }
+
+    private String idExtractor(JSONArray itemsArray, int index) throws Exception{
+        return itemsArray.getJSONObject(index).getString("id");
     }
     private void getAPIJson(){
         try {
@@ -186,23 +206,12 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                 @Override
                 public void onClick(View v) {
                     for(int i=0;i<itemsArray.length();i++){
-                        JSONObject evidence_subJson = new JSONObject();
                         try{
-                            evidence_subJson.put("id",itemsArray.getJSONObject(i).getString("id"));
-                            evidence_subJson.put("choice_id",((CheckBox)checkboxHolder.getChildAt(i)).isChecked()? "present": "absent");
-
-                            evidence.put(evidence_subJson);
-
+                            evidence.put(getEvidenceSubJson(idExtractor(itemsArray,i),
+                                    ((CheckBox)checkboxHolder.getChildAt(i)).isChecked()? "present": "absent"));
                         }catch (Exception e){e.printStackTrace();}
                     }
-                    // question4 line 209
-                    try {
-                        covidObject.put("evidence",evidence);
-                        Log.wtf("object here",evidence.toString());
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    addEvidence();
                     getAPIJson();
                 }
             });
@@ -215,8 +224,49 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         return null;
     }
 
+    private void addEvidence(){
+        // question4 line 209
+        try {
+            covidObject.put("evidence",evidence);
+            Log.wtf("object here",evidence.toString());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private View singleTypeView(final String items){
+        try{
+            final JSONArray itemsArray = new JSONArray(items).getJSONObject(0).getJSONArray("choices");
+            RadioGroup radiobuttonHolder = new RadioGroup(this);
+            radiobuttonHolder.setOrientation(LinearLayout.VERTICAL);
+
+            for(int i=0; i<itemsArray.length();i++){
+                RadioButton selectableRadioButton = new RadioButton(this);
+                selectableRadioButton.setId(i);
+                selectableRadioButton.setText(itemsArray.getJSONObject(i).getString("label"));
+                radiobuttonHolder.addView(selectableRadioButton,i);
+            }
+            radiobuttonHolder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    //TODO:Take the selected item's id and append to the evidence json
+                    try{
+                        String choice_id = ((RadioButton)group.getChildAt(checkedId)).getText().toString().toLowerCase().equals("yes") ? "present" : "absent";
+                        evidence.put(getEvidenceSubJson(idExtractor(new JSONArray(items),0),choice_id));
+
+                        addEvidence();
+                        getAPIJson();
+
+                    }catch (Exception e){e.printStackTrace();}
+                }
+            });
+            return radiobuttonHolder;
+        }catch (Exception e){e.printStackTrace();}
+        return null;
+    }
+
     private View groupSingleTypeView(String items){
-        //TODO: Need to write this view, with Radio group as only one of the options should be selected
         try {
             JSONArray itemsArray = new JSONArray(items);
             RadioGroup radiobuttonHolder = new RadioGroup(this);
@@ -224,13 +274,16 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
             for(int i=0; i<itemsArray.length();i++){
                 RadioButton selectableRadioButton = new RadioButton(this);
+                selectableRadioButton.setId(i);
+
                 selectableRadioButton.setText(itemsArray.getJSONObject(i).getString("name"));
                 radiobuttonHolder.addView(selectableRadioButton,i);
             }
-            radiobuttonHolder.setOnClickListener(new View.OnClickListener() {
+            radiobuttonHolder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
-                    Toast.makeText(question1.this, "Clicked pa clicked :laugh", Toast.LENGTH_SHORT).show();
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    //TODO: Take the selected item's id and append to the evidence json
+
                 }
             });
             return radiobuttonHolder;
@@ -240,6 +293,13 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         }
 
         return null;
+    }
+
+    private JSONObject getEvidenceSubJson(String id, String choiceId) throws Exception{
+        JSONObject evidence_subJson = new JSONObject();
+        evidence_subJson.put("id",id);
+        evidence_subJson.put("choice_id",choiceId);
+        return evidence_subJson;
     }
 
     @Override
