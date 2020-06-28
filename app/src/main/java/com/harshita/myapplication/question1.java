@@ -80,6 +80,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         return inflater.inflate(R.layout.sample_layout, null);
     }
 
+    private String currentTime;
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
         Data inputData = new Data.Builder().putString("apiResponse",apiResponse.toString()).build();
@@ -90,13 +91,13 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         .build();
         workManager.enqueueUniqueWork("displayNextQuestion",ExistingWorkPolicy.REPLACE, displayNextQuestionRequest);
 
-        workManager.getWorkInfosForUniqueWorkLiveData("displayNextQuestion").observe(this, new Observer<List<WorkInfo>>() {
+        workManager.getWorkInfoByIdLiveData(displayNextQuestionRequest.getId()).observe(this, new Observer<WorkInfo>() {
             @Override
-            public void onChanged(List<WorkInfo> workInfos) {
-                if(workInfos!=null && !workInfos.isEmpty()){
-                    if(workInfos.get(0).getState().equals(WorkInfo.State.SUCCEEDED)){
+            public void onChanged(WorkInfo workInfo) {
+                if(workInfo!=null){
+                    if(workInfo.getState().equals(WorkInfo.State.SUCCEEDED)){
 
-                        Data outputDataFromWorker = workInfos.get(0).getOutputData();
+                        Data outputDataFromWorker = workInfo.getOutputData();
 
                         chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
                         String items = outputDataFromWorker.getString("items");
