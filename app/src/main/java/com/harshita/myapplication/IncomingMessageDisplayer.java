@@ -46,7 +46,6 @@ public class IncomingMessageDisplayer extends Worker {
                 .putString("nextQuestion",questionsExtractor())
                 .putString("type",typeExtractor())
                 .putString("items",itemsExtractor())
-                .putString("items",itemsExtractor())
                 .build();
         return  Result.success(outputData);
     }
