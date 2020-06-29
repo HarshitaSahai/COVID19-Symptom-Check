@@ -123,6 +123,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
                         chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
                         String items = outputDataFromWorker.getString("items");
+                       // String stop = outputDataFromWorker.getString("should_stop");
+
                         switch(Objects.requireNonNull(outputDataFromWorker.getString("type"))){
                             case "group_multiple":
                                 chatView1.addMessage(new ChatMessage(groupMultipleTypeView(items),System.currentTimeMillis(), SENT));
@@ -134,14 +136,23 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                                 chatView1.addMessage(new ChatMessage(groupSingleTypeView(items),System.currentTimeMillis(), SENT));
                                 break;
                         }
+                        //TODO : GIVES ERROR ITEMS EMPTY
+                        //if(stop == "true")
+                          //    getvr();
                     }
-                    else{
-                        getvr(); // calling triage
-                    }
-                }
-            }
-        });
+                    //TODO : PRINT null
+                   // else getvr();
 
+                }
+                //TODO : PRINT null
+
+                // else getvr();
+            }
+
+        });
+        //TODO : PRINT null
+
+        //getvr();
     }
     public <name> void getvr()
     {
@@ -167,8 +178,12 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                     while ((line = bufferedReader.readLine()) != null) {
                         log.append(line);
                     }
-                    resultView.setText(response.getString("description"));
-                    resultHolder.addView(resultView);
+                    if(response.getString("description") != null)
+                        chatView1.addMessage(new ChatMessage(response.getString("description"),System.currentTimeMillis(), RECEIVED));
+
+                    //resultView.setText(response.getString("description"));
+
+                    //resultHolder.addView(resultView);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -392,7 +407,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         return evidence_subJson;
     }
 
-    
+
     private void ageQuestion(){
         chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
         chatView1.setTypingListener(new ChatView.TypingListener(){

@@ -46,10 +46,19 @@ public class IncomingMessageDisplayer extends Worker {
                 .putString("nextQuestion",questionsExtractor())
                 .putString("type",typeExtractor())
                 .putString("items",itemsExtractor())
+                .putString("should_stop",resExtractor())
                 .build();
         return  Result.success(outputData);
     }
 
+    private String resExtractor(){
+        try {
+            return questions.getString("should_stop");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     private String itemsExtractor() {
         try {
             return questions.getJSONArray("items").toString();
