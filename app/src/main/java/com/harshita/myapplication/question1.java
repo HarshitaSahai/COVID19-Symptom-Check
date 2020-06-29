@@ -95,6 +95,10 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         return inflater.inflate(R.layout.sample_layout, null);
     }
+/*    private void ageQuestion(){
+        chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+        chatView1.setTypingListener();
+    }*/
 
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
@@ -268,9 +272,12 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
     private View groupSingleTypeView(String items){
         try {
-            JSONArray itemsArray = new JSONArray(items);
-            RadioGroup radiobuttonHolder = new RadioGroup(this);
+            final JSONArray itemsArray = new JSONArray(items);
+            final RadioGroup radiobuttonHolder = new RadioGroup(this);
             radiobuttonHolder.setOrientation(LinearLayout.VERTICAL);
+            Button bgmp = new Button(this);
+            bgmp.setText("Next"); // Button for storing value in evidence[]
+
 
             for(int i=0; i<itemsArray.length();i++){
                 RadioButton selectableRadioButton = new RadioButton(this);
@@ -279,19 +286,28 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                 selectableRadioButton.setText(itemsArray.getJSONObject(i).getString("name"));
                 radiobuttonHolder.addView(selectableRadioButton,i);
             }
-            radiobuttonHolder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    //TODO: Take the selected item's id and append to the evidence json
+            radiobuttonHolder.addView(bgmp,itemsArray.length()); // Adding button to view
 
+            bgmp.setOnClickListener( new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    for(int i=0;i<itemsArray.length();i++){
+                        try{
+                            evidence.put(getEvidenceSubJson(idExtractor(itemsArray,i),
+                                    ((RadioButton)radiobuttonHolder.getChildAt(i)).isChecked()? "present": "absent"));
+                        }catch (Exception e){e.printStackTrace();}
+                    }
+                    addEvidence();
+                    getAPIJson();
                 }
             });
+
             return radiobuttonHolder;
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
