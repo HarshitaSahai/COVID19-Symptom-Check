@@ -27,6 +27,8 @@ import com.harshita.myapplication.R;
 import com.harshita.myapplication.adapters.ChatViewListAdapter;
 import com.harshita.myapplication.models.ChatMessage;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 import co.intentservice.chatui.fab.FloatingActionsMenu;
@@ -293,7 +295,7 @@ public class ChatView extends RelativeLayout {
                 long stamp = System.currentTimeMillis();
                 String message = inputEditText.getText().toString();
                 if (!TextUtils.isEmpty(message)) {
-                    sendMessage(message, stamp);
+                    sendMessage(message,stamp);
                 }
 
             }

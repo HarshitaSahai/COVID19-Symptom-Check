@@ -3,6 +3,7 @@ package com.harshita.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,8 +13,10 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -23,6 +26,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +46,11 @@ import com.harshita.myapplication.models.ChatMessage;
 import com.harshita.myapplication.views.ChatView;
 
 import org.json.JSONArray;
+import org.w3c.dom.Text;
 
 import java.util.Objects;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static com.harshita.myapplication.models.ChatMessage.Type.RECEIVED;
 import static com.harshita.myapplication.models.ChatMessage.Type.SENT;
@@ -52,35 +61,18 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private JSONObject covidObject = new JSONObject();
     private JSONObject apiResponse = new JSONObject();
     private MutableLiveData<JSONObject> responseAlert = new MutableLiveData<>();
-    //private String agebyuser;
     private  JSONArray evidence = new JSONArray(); //Array for storing id and choice
-    private String singleQuestionChoiceId;
 
+    private final String TRIAGE_URL = BuildConfig.triage_url;
+    private final String DIAGNOSIS_URL = BuildConfig.diagnosis_url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.question1);
 
         chatView1 = findViewById(R.id.chat_view);
-
-        chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
-        chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
         chatView1.setOnClickListener(this);
-
-//        chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
-//            @Override
-//            public boolean sendMessage(ChatMessage chatMessage) {
-//                String message = chatMessage.getMessage().toLowerCase();
-//                switch (message){
-//                    case "yes":
-//                    case "no":
-//                        evidence.put()
-//                        break;
-//                    default:
-//                        Toast.makeText(question1.this, "Please say yes or no", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
+        question_1();
 
         responseAlert.observe(this, new Observer<JSONObject>() {
             @Override
@@ -90,11 +82,30 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         });
     }
 
-    private View question_1(){
-        //Sample view given here
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflater.inflate(R.layout.sample_layout, null);
+    private void question_1(){
+
+        try {
+            JSONObject male = new JSONObject();
+            male.put("id","m");
+            male.put("name","Male");
+
+            JSONObject female = new JSONObject();
+            female.put("id","f");
+            female.put("name","Female");
+
+            JSONArray items = new JSONArray();
+            items.put(male);
+            items.put(female);
+
+            Log.wtf("items",items.toString());
+            chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
+            chatView1.addMessage(new ChatMessage(groupSingleTypeView(items.toString(),false), System.currentTimeMillis(), SENT));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
@@ -114,33 +125,39 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
                         Data outputDataFromWorker = workInfo.getOutputData();
 
-                        chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
-                        String items = outputDataFromWorker.getString("items");
-                        switch(Objects.requireNonNull(outputDataFromWorker.getString("type"))){
-                            case "group_multiple":
-                                chatView1.addMessage(new ChatMessage(groupMultipleTypeView(items),System.currentTimeMillis(), SENT));
-                                break;
-                            case "single":
-                                chatView1.addMessage(new ChatMessage(singleTypeView(items),System.currentTimeMillis(), SENT));
-                                break;
-                            case "group_single":
-                                chatView1.addMessage(new ChatMessage(groupSingleTypeView(items),System.currentTimeMillis(), SENT));
-                                break;
+                        if(!outputDataFromWorker.getBoolean("shouldStop",false)){
+                            chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
+                            String items = outputDataFromWorker.getString("items");
+
+                            switch(Objects.requireNonNull(outputDataFromWorker.getString("type"))){
+                                case "group_multiple":
+                                    chatView1.addMessage(new ChatMessage(groupMultipleTypeView(items),System.currentTimeMillis(), SENT));
+                                    break;
+                                case "single":
+                                    chatView1.addMessage(new ChatMessage(singleTypeView(items),System.currentTimeMillis(), SENT));
+                                    break;
+                                case "group_single":
+                                    chatView1.addMessage(new ChatMessage(groupSingleTypeView(items,true),System.currentTimeMillis(), SENT));
+                                    break;
+                            }
                         }
+                        //If should stop is true, it means it's time to call the triage api
+                        else{
+                            getAPIJson(TRIAGE_URL,"triage");
+                        }
+                        
                     }
                 }
             }
+
         });
-
     }
-
     private String idExtractor(JSONArray itemsArray, int index) throws Exception{
         return itemsArray.getJSONObject(index).getString("id");
     }
-    private void getAPIJson(){
+    private void getAPIJson(String url,final String type){
         try {
             RequestQueue queue = Volley.newRequestQueue(this);
-            String url = "https://api.infermedica.com/covid19/diagnosis";
             Log.wtf("covid obejct", covidObject.toString());
 
             JsonObjectRequest getRequest = new JsonObjectRequest(
@@ -149,10 +166,23 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                 @Override
                 public void onResponse(JSONObject response)
                 {
-                    apiResponse = response;
-                    responseAlert.setValue(apiResponse);
+                    switch (type){
+                        case "diagnosis":
+                            apiResponse = response;
+                            responseAlert.setValue(apiResponse);
 
-                    Log.wtf("question", response.toString());
+                            Log.wtf("question", response.toString());
+                            break;
+                        case "triage":
+                            try {
+                                if(response.getString("description") != null)
+                                    chatView1.addMessage(new ChatMessage(response.getString("description"),System.currentTimeMillis(), RECEIVED));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
 
                 }
             }, new com.android.volley.Response.ErrorListener()
@@ -176,7 +206,6 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                     return params;
                 }
             };
-           //return getRequest;
             queue.add(getRequest);
 
         } catch (Exception e) {
@@ -212,7 +241,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         }catch (Exception e){e.printStackTrace();}
                     }
                     addEvidence();
-                    getAPIJson();
+                    getAPIJson(DIAGNOSIS_URL,"diagnosis");
                 }
             });
 
@@ -250,13 +279,12 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
             radiobuttonHolder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    //TODO:Take the selected item's id and append to the evidence json
                     try{
                         String choice_id = ((RadioButton)group.getChildAt(checkedId)).getText().toString().toLowerCase().equals("yes") ? "present" : "absent";
                         evidence.put(getEvidenceSubJson(idExtractor(new JSONArray(items),0),choice_id));
 
                         addEvidence();
-                        getAPIJson();
+                        getAPIJson(DIAGNOSIS_URL,"diagnosis");
 
                     }catch (Exception e){e.printStackTrace();}
                 }
@@ -266,10 +294,10 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         return null;
     }
 
-    private View groupSingleTypeView(String items){
+    private View groupSingleTypeView(String items, final boolean appendToEvidence){
         try {
-            JSONArray itemsArray = new JSONArray(items);
-            RadioGroup radiobuttonHolder = new RadioGroup(this);
+            final JSONArray itemsArray = new JSONArray(items);
+            final RadioGroup radiobuttonHolder = new RadioGroup(this);
             radiobuttonHolder.setOrientation(LinearLayout.VERTICAL);
 
             for(int i=0; i<itemsArray.length();i++){
@@ -279,19 +307,36 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                 selectableRadioButton.setText(itemsArray.getJSONObject(i).getString("name"));
                 radiobuttonHolder.addView(selectableRadioButton,i);
             }
+
             radiobuttonHolder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    //TODO: Take the selected item's id and append to the evidence json
-
+                    if(appendToEvidence){
+                        for(int i=0;i<itemsArray.length();i++){
+                            try{
+                                evidence.put(getEvidenceSubJson(idExtractor(itemsArray,i),
+                                        ((RadioButton)radiobuttonHolder.getChildAt(i)).isChecked()? "present": "absent"));
+                            }catch (Exception e){e.printStackTrace();}
+                        }
+                        addEvidence();
+                        getAPIJson(DIAGNOSIS_URL,"diagnosis");
+                    }
+                    else{
+                        try {
+                            covidObject.put("sex", ((RadioButton)radiobuttonHolder.getChildAt(checkedId)).getText().toString().toLowerCase());
+                            ageQuestion();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             });
+
             return radiobuttonHolder;
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -302,6 +347,45 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         return evidence_subJson;
     }
 
+
+    private int age;
+    private void ageQuestion(){
+        chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+        chatView1.setTypingListener(new ChatView.TypingListener(){
+            @Override
+            public void userStartedTyping(){
+                // will be called when the user starts typing
+            }
+
+            @Override
+            public void userStoppedTyping(){
+                // will be called when the user stops typing
+
+            }
+        });
+        chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
+            @Override
+            public boolean sendMessage(ChatMessage chatMessage) {
+                String message = chatMessage.getMessage().toLowerCase();
+                try{
+                    age = Integer.parseInt(message);
+                    covidObject.put("age",age);
+                    covidObject.put("evidence", new JSONArray());
+
+                    getAPIJson(DIAGNOSIS_URL,"diagnosis");
+                    return true;
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(question1.this, "Please enter your age", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+        });
+    }
+
+
+
+
     @Override
     public void onClick(View v) {
         try{
@@ -310,20 +394,16 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                     RadioButton m =findViewById(R.id.male);
                     RadioButton f =findViewById(R.id.female);
                     if(m.isChecked()){
-                    covidObject.put("sex","male");
-                    covidObject.put("age",21);
-                        covidObject.put("evidence", new JSONArray());}
-                    else if(f.isChecked()){
-                        covidObject.put("sex","female");
-                        covidObject.put("age",21);
-                        covidObject.put("evidence", new JSONArray()); }
+                        covidObject.put("sex","male");
+                    }
+                    else if(f.isChecked()) {
+                        covidObject.put("sex", "female");
+                    }
                     else{
                         Toast.makeText(question1.this, "Select male or female!", Toast.LENGTH_SHORT).show();
-
                     }
                     break;
             }
-            getAPIJson();
         }catch (Exception e){e.printStackTrace();}
     }
 }
