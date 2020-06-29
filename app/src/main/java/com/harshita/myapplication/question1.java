@@ -12,8 +12,10 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -23,6 +25,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +45,7 @@ import com.harshita.myapplication.models.ChatMessage;
 import com.harshita.myapplication.views.ChatView;
 
 import org.json.JSONArray;
+import org.w3c.dom.Text;
 
 import java.util.Objects;
 
@@ -95,10 +101,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         return inflater.inflate(R.layout.sample_layout, null);
     }
-/*    private void ageQuestion(){
-        chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
-        chatView1.setTypingListener();
-    }*/
+
 
     private void displayQuestions(){
         WorkManager workManager = WorkManager.getInstance(this);
@@ -132,10 +135,81 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                                 break;
                         }
                     }
+                    else{
+                        getvr(); // calling triage
+                    }
                 }
             }
         });
 
+    }
+    public <name> void getvr()
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://api.infermedica.com/covid19/triage";
+        final LinearLayout resultHolder = new LinearLayout(this);
+        resultHolder.setOrientation(LinearLayout.VERTICAL);
+
+        final TextView resultView = new TextView(this);
+       // bgmp.setText("Next"); // Button for storing value in evidence[]
+        JsonObjectRequest getRequest = new JsonObjectRequest(
+                Request.Method.POST
+                ,  url,covidObject, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response){
+                try {
+                    Process process = Runtime.getRuntime().exec("logcat -d");
+                    BufferedReader bufferedReader = new BufferedReader(
+                            new InputStreamReader(process.getInputStream()));
+
+                    StringBuilder log=new StringBuilder();
+                    String line = "";
+                    while ((line = bufferedReader.readLine()) != null) {
+                        log.append(line);
+                    }
+                    resultView.setText(response.getString("description"));
+                    resultHolder.addView(resultView);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                Log.d("description", response.toString());
+                //textView.setText(response);
+
+                try {
+                    String text = response.getString("text");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new com.android.volley.Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.d("ERROR","error => "+error.toString());
+                error.printStackTrace();
+
+            }
+        }){
+
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("Content-Type","application/json");
+                params.put("App-Id", "fd9740f0");
+                params.put("App-Key", "369c63fe2ab752b87ac60189d368a7e1");
+
+                return params;
+            }
+        };
+        queue.add(getRequest);
     }
 
     private String idExtractor(JSONArray itemsArray, int index) throws Exception{
@@ -317,6 +391,25 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         evidence_subJson.put("choice_id",choiceId);
         return evidence_subJson;
     }
+
+    
+    private void ageQuestion(){
+        chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+        chatView1.setTypingListener(new ChatView.TypingListener(){
+            @Override
+            public void userStartedTyping(){
+                // will be called when the user starts typing
+            }
+
+            @Override
+            public void userStoppedTyping(){
+                // will be called when the user stops typing
+            }
+        });
+    }
+
+
+
 
     @Override
     public void onClick(View v) {
