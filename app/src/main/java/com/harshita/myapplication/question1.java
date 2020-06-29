@@ -72,6 +72,23 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         chatView1.addMessage(new ChatMessage("Please Select Your Gender",System.currentTimeMillis(), RECEIVED));
         chatView1.addMessage(new ChatMessage(question_1(), System.currentTimeMillis(), SENT));
         chatView1.setOnClickListener(this);
+        chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
+            @Override
+            public boolean sendMessage(ChatMessage chatMessage) throws JSONException {
+                String age  = chatMessage.getMessage();
+                Integer intage = Integer.parseInt(age);
+
+                    covidObject.put("age",intage);
+                    covidObject.put("evidence", new JSONArray());
+                getAPIJson();
+                return true;
+
+
+
+            }
+
+
+        });
 
 //        chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
 //            @Override
@@ -141,7 +158,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                           //    getvr();
                     }
                     //TODO : PRINT null
-                   // else getvr();
+                   else getvr();
 
                 }
                 //TODO : PRINT null
@@ -435,12 +452,13 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                     RadioButton f =findViewById(R.id.female);
                     if(m.isChecked()){
                     covidObject.put("sex","male");
-                    covidObject.put("age",21);
-                        covidObject.put("evidence", new JSONArray());}
-                    else if(f.isChecked()){
-                        covidObject.put("sex","female");
-                        covidObject.put("age",21);
-                        covidObject.put("evidence", new JSONArray()); }
+                    ageQuestion();
+                    }
+                    else if(f.isChecked()) {
+                        covidObject.put("sex", "female");
+                        ageQuestion();
+                    }
+
                     else{
                         Toast.makeText(question1.this, "Select male or female!", Toast.LENGTH_SHORT).show();
 

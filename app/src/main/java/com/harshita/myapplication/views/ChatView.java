@@ -27,6 +27,8 @@ import com.harshita.myapplication.R;
 import com.harshita.myapplication.adapters.ChatViewListAdapter;
 import com.harshita.myapplication.models.ChatMessage;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 import co.intentservice.chatui.fab.FloatingActionsMenu;
@@ -370,9 +372,13 @@ public class ChatView extends RelativeLayout {
     private void sendMessage(String message, long stamp) {
 
         ChatMessage chatMessage = new ChatMessage(message, stamp, ChatMessage.Type.SENT);
-        if (onSentMessageListener != null && onSentMessageListener.sendMessage(chatMessage)) {
-            chatViewListAdapter.addMessage(chatMessage);
-            inputEditText.setText("");
+        try {
+            if (onSentMessageListener != null && onSentMessageListener.sendMessage(chatMessage)) {
+                chatViewListAdapter.addMessage(chatMessage);
+                inputEditText.setText("");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -411,7 +417,7 @@ public class ChatView extends RelativeLayout {
     }
 
     public interface OnSentMessageListener {
-        boolean sendMessage(ChatMessage chatMessage);
+        boolean sendMessage(ChatMessage chatMessage) throws JSONException;
     }
 
 }
