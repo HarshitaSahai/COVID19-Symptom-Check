@@ -1,15 +1,6 @@
 package com.harshita.myapplication;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.TextView;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -18,12 +9,6 @@ import androidx.work.WorkerParameters;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class IncomingMessageDisplayer extends Worker {
@@ -34,7 +19,9 @@ public class IncomingMessageDisplayer extends Worker {
         super(context, workerParams);
         try{
             apiResponse = new JSONObject(getInputData().getString("apiResponse"));
-            questions = apiResponse.getJSONObject("question");
+            if(!shouldStop()){
+                questions = apiResponse.getJSONObject("question");
+            }
         }catch (Exception e){e.printStackTrace();}
 
     }
@@ -44,20 +31,20 @@ public class IncomingMessageDisplayer extends Worker {
     public Result doWork() {
         Data outputData = new Data.Builder()
                 .putString("nextQuestion",questionsExtractor())
-                .putString("type",typeExtractor())
-                .putString("items",itemsExtractor())
-                .putString("should_stop",resExtractor())
+                .putString("type",shouldStop()? null : typeExtractor())
+                .putString("items",shouldStop() ? null: itemsExtractor())
+                .putBoolean("shouldStop", shouldStop())
                 .build();
         return  Result.success(outputData);
     }
 
-    private String resExtractor(){
+    private Boolean shouldStop(){
         try {
-            return questions.getString("should_stop");
+            return apiResponse.getBoolean("should_stop");
         } catch (JSONException e) {
             e.printStackTrace();
+            return false;
         }
-        return null;
     }
     private String itemsExtractor() {
         try {

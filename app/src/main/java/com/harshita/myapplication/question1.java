@@ -3,6 +3,7 @@ package com.harshita.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,6 +49,7 @@ import org.json.JSONArray;
 import org.w3c.dom.Text;
 
 import java.util.Objects;
+import java.util.Properties;
 
 import static com.harshita.myapplication.models.ChatMessage.Type.RECEIVED;
 import static com.harshita.myapplication.models.ChatMessage.Type.SENT;
@@ -61,7 +63,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     //private String agebyuser;
     private  JSONArray evidence = new JSONArray(); //Array for storing id and choice
     private String singleQuestionChoiceId;
-
+    private final String TRIAGE_URL ="https://api.infermedica.com/covid19/triage";
+    private final String DIAGNOSIS_URL = "https://api.infermedica.com/covid19/diagnosis";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,85 +124,49 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
                         Data outputDataFromWorker = workInfo.getOutputData();
 
-                        chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
-                        String items = outputDataFromWorker.getString("items");
-                       // String stop = outputDataFromWorker.getString("should_stop");
-
-                        switch(Objects.requireNonNull(outputDataFromWorker.getString("type"))){
-                            case "group_multiple":
-                                chatView1.addMessage(new ChatMessage(groupMultipleTypeView(items),System.currentTimeMillis(), SENT));
-                                break;
-                            case "single":
-                                chatView1.addMessage(new ChatMessage(singleTypeView(items),System.currentTimeMillis(), SENT));
-                                break;
-                            case "group_single":
-                                chatView1.addMessage(new ChatMessage(groupSingleTypeView(items),System.currentTimeMillis(), SENT));
-                                break;
+                        if(!outputDataFromWorker.getBoolean("shouldStop",false)){
+                            chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
+                            String items = outputDataFromWorker.getString("items");
+                           // String stop = outputDataFromWorker.getString("should_stop");
+    
+                            switch(Objects.requireNonNull(outputDataFromWorker.getString("type"))){
+                                case "group_multiple":
+                                    chatView1.addMessage(new ChatMessage(groupMultipleTypeView(items),System.currentTimeMillis(), SENT));
+                                    break;
+                                case "single":
+                                    chatView1.addMessage(new ChatMessage(singleTypeView(items),System.currentTimeMillis(), SENT));
+                                    break;
+                                case "group_single":
+                                    chatView1.addMessage(new ChatMessage(groupSingleTypeView(items),System.currentTimeMillis(), SENT));
+                                    break;
+                            }
                         }
-                        //TODO : GIVES ERROR ITEMS EMPTY
-                        //if(stop == "true")
-                          //    getvr();
+                        //If should stop is true, it means it's time to call the triage api
+                        else{
+                            getAPIJson(TRIAGE_URL,"triage");
+                        }
+                        
                     }
-                    //TODO : PRINT null
-                   // else getvr();
 
                 }
-                //TODO : PRINT null
-
-                // else getvr();
             }
 
         });
-        //TODO : PRINT null
-
-        //getvr();
     }
-    public <name> void getvr()
+    private void getTriageResult()
     {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://api.infermedica.com/covid19/triage";
         final LinearLayout resultHolder = new LinearLayout(this);
         resultHolder.setOrientation(LinearLayout.VERTICAL);
 
-        final TextView resultView = new TextView(this);
-       // bgmp.setText("Next"); // Button for storing value in evidence[]
         JsonObjectRequest getRequest = new JsonObjectRequest(
                 Request.Method.POST
                 ,  url,covidObject, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response){
-                try {
-                    Process process = Runtime.getRuntime().exec("logcat -d");
-                    BufferedReader bufferedReader = new BufferedReader(
-                            new InputStreamReader(process.getInputStream()));
-
-                    StringBuilder log=new StringBuilder();
-                    String line = "";
-                    while ((line = bufferedReader.readLine()) != null) {
-                        log.append(line);
-                    }
-                    if(response.getString("description") != null)
-                        chatView1.addMessage(new ChatMessage(response.getString("description"),System.currentTimeMillis(), RECEIVED));
-
-                    //resultView.setText(response.getString("description"));
-
-                    //resultHolder.addView(resultView);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
 
                 Log.d("description", response.toString());
-                //textView.setText(response);
-
-                try {
-                    String text = response.getString("text");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
             }
         }, new com.android.volley.Response.ErrorListener()
         {
@@ -230,10 +197,9 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private String idExtractor(JSONArray itemsArray, int index) throws Exception{
         return itemsArray.getJSONObject(index).getString("id");
     }
-    private void getAPIJson(){
+    private void getAPIJson(String url,final String type){
         try {
             RequestQueue queue = Volley.newRequestQueue(this);
-            String url = "https://api.infermedica.com/covid19/diagnosis";
             Log.wtf("covid obejct", covidObject.toString());
 
             JsonObjectRequest getRequest = new JsonObjectRequest(
@@ -242,10 +208,23 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                 @Override
                 public void onResponse(JSONObject response)
                 {
-                    apiResponse = response;
-                    responseAlert.setValue(apiResponse);
+                    switch (type){
+                        case "diagnosis":
+                            apiResponse = response;
+                            responseAlert.setValue(apiResponse);
 
-                    Log.wtf("question", response.toString());
+                            Log.wtf("question", response.toString());
+                            break;
+                        case "triage":
+                            try {
+                                if(response.getString("description") != null)
+                                    chatView1.addMessage(new ChatMessage(response.getString("description"),System.currentTimeMillis(), RECEIVED));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
 
                 }
             }, new com.android.volley.Response.ErrorListener()
@@ -305,7 +284,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         }catch (Exception e){e.printStackTrace();}
                     }
                     addEvidence();
-                    getAPIJson();
+                    getAPIJson(DIAGNOSIS_URL,"diagnosis");
                 }
             });
 
@@ -349,7 +328,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         evidence.put(getEvidenceSubJson(idExtractor(new JSONArray(items),0),choice_id));
 
                         addEvidence();
-                        getAPIJson();
+                        getAPIJson(DIAGNOSIS_URL,"diagnosis");
 
                     }catch (Exception e){e.printStackTrace();}
                 }
@@ -388,7 +367,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         }catch (Exception e){e.printStackTrace();}
                     }
                     addEvidence();
-                    getAPIJson();
+                    getAPIJson(DIAGNOSIS_URL,"diagnosis");
                 }
             });
 
@@ -434,8 +413,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                     RadioButton m =findViewById(R.id.male);
                     RadioButton f =findViewById(R.id.female);
                     if(m.isChecked()){
-                    covidObject.put("sex","male");
-                    covidObject.put("age",21);
+                        covidObject.put("sex","male");
+                        covidObject.put("age",21);
                         covidObject.put("evidence", new JSONArray());}
                     else if(f.isChecked()){
                         covidObject.put("sex","female");
@@ -447,7 +426,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                     }
                     break;
             }
-            getAPIJson();
+            getAPIJson(DIAGNOSIS_URL,"diagnosis");
         }catch (Exception e){e.printStackTrace();}
     }
 }
