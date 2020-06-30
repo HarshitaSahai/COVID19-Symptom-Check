@@ -59,7 +59,7 @@ public class IncomingMessageDisplayer extends Worker {
     private String questionsExtractor(){
         try{
             return questions.getString("text");
-        }catch (Exception e){e.printStackTrace(); return null;}
+        }catch (Exception ignore){return null;}
 
     }
 
