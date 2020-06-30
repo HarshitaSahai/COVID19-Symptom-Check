@@ -56,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 import static com.harshita.myapplication.models.ChatMessage.Type.RECEIVED;
 import static com.harshita.myapplication.models.ChatMessage.Type.SENT;
 
-public class question1  extends AppCompatActivity implements View.OnClickListener {
+public class question1  extends AppCompatActivity {
 
     private ChatView chatView1;
     private JSONObject covidObject = new JSONObject();
@@ -72,7 +72,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         setContentView(R.layout.question1);
 
         chatView1 = findViewById(R.id.chat_view);
-        chatView1.setOnClickListener(this);
+//        chatView1.setOnClickListener(this);
+
         toggleInputVisibility(View.GONE);
         question_1();
 
@@ -194,7 +195,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
-                    Log.d("ERROR","error => "+error.toString());
+                    chatView1.addMessage(new ChatMessage("Sorry! \nWe're not able to connect to our servers, please try again later",System.currentTimeMillis(), RECEIVED));
+                    Log.wtf("ERROR","error => "+error.toString());
                     error.printStackTrace();
 
                 }
@@ -374,7 +376,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         chatView1.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
             @Override
             public boolean sendMessage(ChatMessage chatMessage) {
-                String message = chatMessage.getMessage().toLowerCase();
+                String message = ((TextView)chatMessage.getView()).getText().toString().toLowerCase();
                 try{
                     age = Integer.parseInt(message);
                     covidObject.put("age",age);
@@ -393,27 +395,6 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
     private void toggleInputVisibility(int visibility){
         chatView1.setInputVisibility(visibility);
-    }
-
-    @Override
-    public void onClick(View v) {
-        try{
-            switch (v.getId()){
-                case R.id.genderNextButton:
-                    RadioButton m =findViewById(R.id.male);
-                    RadioButton f =findViewById(R.id.female);
-                    if(m.isChecked()){
-                        covidObject.put("sex","male");
-                    }
-                    else if(f.isChecked()) {
-                        covidObject.put("sex", "female");
-                    }
-                    else{
-                        Toast.makeText(question1.this, "Select male or female!", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
-        }catch (Exception e){e.printStackTrace();}
     }
 }
 

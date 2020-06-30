@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -296,6 +297,7 @@ public class ChatView extends RelativeLayout {
                 String message = inputEditText.getText().toString();
                 if (!TextUtils.isEmpty(message)) {
                     sendMessage(message,stamp);
+
                 }
 
             }
@@ -369,12 +371,26 @@ public class ChatView extends RelativeLayout {
         this.onSentMessageListener = onSentMessageListener;
     }
 
+    private View getSentMessageView(String message){
+
+        TextView messageView = new TextView(getContext());
+        messageView.setTextColor(getContext().getResources().getColor(R.color.black));
+//        messageView.setTextSize(R.dimen.default_message_text_size);
+        messageView.setText(message);
+//        messageView.setBackground(null);
+//        messageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, R.dimen.default_message_text_size));
+
+        return messageView;
+    }
+
     private void sendMessage(String message, long stamp) {
 
-        ChatMessage chatMessage = new ChatMessage(message, stamp, ChatMessage.Type.SENT);
+        ChatMessage chatMessage = new ChatMessage(getSentMessageView(message), stamp, ChatMessage.Type.SENT);
+
         if (onSentMessageListener != null && onSentMessageListener.sendMessage(chatMessage)) {
-            chatViewListAdapter.addMessage(chatMessage);
+            addMessage(chatMessage);
             inputEditText.setText("");
+
         }
     }
 
