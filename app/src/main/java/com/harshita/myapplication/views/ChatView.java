@@ -416,5 +416,14 @@ public class ChatView extends RelativeLayout {
         boolean sendMessage(ChatMessage chatMessage);
     }
 
+    public void setInputVisibility(int visibility){
+        inputEditText.setVisibility(visibility);
+        actionsMenu.setVisibility(visibility);
+    }
+
+    public void setInputType(int type){
+        inputEditText.setInputType(type);
+    }
+
 }
 

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -72,6 +73,7 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
 
         chatView1 = findViewById(R.id.chat_view);
         chatView1.setOnClickListener(this);
+        toggleInputVisibility(View.GONE);
         question_1();
 
         responseAlert.observe(this, new Observer<JSONObject>() {
@@ -128,6 +130,8 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
                         if(!outputDataFromWorker.getBoolean("shouldStop",false)){
                             chatView1.addMessage(new ChatMessage(outputDataFromWorker.getString("nextQuestion"), System.currentTimeMillis(), RECEIVED));
                             String items = outputDataFromWorker.getString("items");
+                            //Don't allow user to say anything
+                            toggleInputVisibility(View.GONE);
 
                             switch(Objects.requireNonNull(outputDataFromWorker.getString("type"))){
                                 case "group_multiple":
@@ -351,6 +355,10 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
     private int age;
     private void ageQuestion(){
         chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+
+        toggleInputVisibility(View.VISIBLE);
+        chatView1.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+
         chatView1.setTypingListener(new ChatView.TypingListener(){
             @Override
             public void userStartedTyping(){
@@ -383,8 +391,9 @@ public class question1  extends AppCompatActivity implements View.OnClickListene
         });
     }
 
-
-
+    private void toggleInputVisibility(int visibility){
+        chatView1.setInputVisibility(visibility);
+    }
 
     @Override
     public void onClick(View v) {
