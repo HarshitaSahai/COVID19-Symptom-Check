@@ -4,6 +4,8 @@
     android:layout_height="match_parent">
 
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,6 +49,10 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="#c0c0c0"/>
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -72,7 +78,7 @@ WHO guidance
                 android:textStyle="italic" />
 
         </RelativeLayout>
-
+        </ScrollView>
     </LinearLayout>
 
 
@@ -86,7 +92,7 @@ WHO guidance
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="86dp"
+            android:layout_height="wrap_content"
             android:gravity="center">
 
             <Button
@@ -100,8 +106,6 @@ WHO guidance
                 android:textSize="15dp" />
         </RelativeLayout>
     </LinearLayout>
-
-
 
 
 </RelativeLayout>

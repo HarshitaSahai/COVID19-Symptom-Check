@@ -357,6 +357,7 @@ public class question1  extends AppCompatActivity {
     private int age;
     private void ageQuestion(){
         chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
+        Toast.makeText(question1.this, "Please enter a valid age (between 1 to 120)", Toast.LENGTH_SHORT).show();
 
         toggleInputVisibility(View.VISIBLE);
         chatView1.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
@@ -379,10 +380,16 @@ public class question1  extends AppCompatActivity {
                 String message = ((TextView)chatMessage.getView()).getText().toString().toLowerCase();
                 try{
                     age = Integer.parseInt(message);
+                   /* if(age > 1 && age < 120)
+                    {
+                        Toast.makeText(question1.this, "Please enter a valid age (between 1 to 120)", Toast.LENGTH_SHORT).show();
+                        ageQuestion();
+                    }*/
                     covidObject.put("age",age);
                     covidObject.put("evidence", new JSONArray());
 
                     getAPIJson(DIAGNOSIS_URL,"diagnosis");
+
                     return true;
                 }catch (Exception e){
                     e.printStackTrace();
