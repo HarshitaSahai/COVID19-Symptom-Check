@@ -380,11 +380,12 @@ public class question1  extends AppCompatActivity {
                 String message = ((TextView)chatMessage.getView()).getText().toString().toLowerCase();
                 try{
                     age = Integer.parseInt(message);
-                   /* if(age > 1 && age < 120)
+                    if(age < 18 || age > 120)
                     {
-                        Toast.makeText(question1.this, "Please enter a valid age (between 1 to 120)", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(question1.this, "Please enter a valid age (between 18 to 120)", Toast.LENGTH_SHORT).show();
                         ageQuestion();
-                    }*/
+                        return false;
+                    }
                     covidObject.put("age",age);
                     covidObject.put("evidence", new JSONArray());
 
