@@ -168,7 +168,7 @@
 
                 android:text="If you have any of these symptoms, call your local emergency number now."
                 android:textColor="#283593"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 android:textStyle="italic" />
 
             <Button
@@ -179,7 +179,7 @@
                 android:clickable="true"
                 android:text="I do not have any of these symptoms"
                 android:textAlignment="center"
-                android:layout_margin="16dp"
+                android:layout_margin="6dp"
                 android:textSize="16sp" />
 
         </LinearLayout>
