@@ -1,67 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-
-
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="2dp"
+        android:weightSum="2">
 
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="326dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Atom360 "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#283593"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/editText1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="2dp"
-            android:weightSum="2">
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="COVID-19 assessment"
+            android:textColor="#D8D8D8"
+            android:textSize="18sp"
 
+            android:textStyle="italic" />
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="326dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="atom360 "
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#283593"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"/>
 
-            <TextView
-                android:id="@+id/editText1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:hint="COVID-19 assessment"
-                android:textColor="#D8D8D8"
-                android:textSize="18sp"
-
-                android:textStyle="italic" />
-
-        </LinearLayout>
-        <View
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#c0c0c0"/>
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical" >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"      >
+            android:layout_height="match_parent">
 
             <TextView
+                android:layout_margin="8dp"
                 android:id="@+id/editText7"
                 android:layout_width="match_parent"
-                android:layout_height="635dp"
+                android:layout_height="wrap_content"
                 android:ems="10"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
@@ -73,39 +65,31 @@ World Health Organization
 . This screening tool is based on
 WHO guidance
 "
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 android:textColor="#283593"
                 android:textSize="24sp"
                 android:textStyle="italic" />
 
-        </RelativeLayout>
-        </ScrollView>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:padding="5dp"
-        android:weightSum="3">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-
             <Button
                 android:id="@+id/iunderstand"
-                android:layout_width="227dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/editText7"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center"
                 android:background="@drawable/button_drawable"
                 android:clickable="true"
                 android:text="I understand"
                 android:textAlignment="center"
-                android:textSize="15dp" />
-        </RelativeLayout>
-    </LinearLayout>
+                android:textSize="16sp"
+                android:layout_margin="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editText7"/>
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-</RelativeLayout>
+</LinearLayout>
