@@ -357,7 +357,7 @@ public class question1  extends AppCompatActivity {
     private int age;
     private void ageQuestion(){
         chatView1.addMessage(new ChatMessage("What is your age?", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
-        Toast.makeText(question1.this, "Please enter a valid age (between 1 to 120)", Toast.LENGTH_SHORT).show();
+        Toast.makeText(question1.this, "Please enter a valid age (between 18 to 120)", Toast.LENGTH_SHORT).show();
 
         toggleInputVisibility(View.VISIBLE);
         chatView1.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
